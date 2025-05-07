@@ -1,0 +1,74 @@
+/* Sidebar - Estilo geral */
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100%;
+    background-color: #333;
+    transition: width 0.3s ease-in-out;
+    z-index: 1000;
+  }
+  
+  .sidebar.closed {
+    width: 60px; /* Quando fechada, a sidebar será mais estreita */
+  }
+  
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #444;
+  }
+  
+  .sidebar-header .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .sidebar-content {
+    padding-top: 20px;
+  }
+  
+  .sidebar-menu {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: #fff;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sidebar-item:hover {
+    background-color: #555;
+  }
+  
+  .sidebar-item .sidebar-icon {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  
+  /* Main Content */
+  .main-content {
+    transition: margin-left 0.3s ease-in-out; /* Faz o conteúdo da página se ajustar */
+    padding: 20px;
+  }
+  
+  .main-content.shifted {
+    margin-left: -400px; /* Quando a sidebar está aberta */
+  }
+  
+  .main-content.shifted-closed {
+    margin-left: -600px; /* Quando a sidebar está fechada */
+  }
+  

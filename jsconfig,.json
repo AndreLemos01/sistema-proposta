@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "baseUrl": "src",  // Definindo o diretório base para a resolução de módulos
+      "paths": {
+        "@/*": ["./src/*"]  // Permite o uso de alias, como @/ para acessar a pasta src
+      }
+    },
+    "include": [
+      "src/**/*"  // Inclui todos os arquivos JavaScript dentro da pasta src
+    ]
+  }
+  
