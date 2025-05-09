@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react'; // Certifique-se de importar o useState
-import { PropostasContext } from '../context/PropostasContext'; // Importando o contexto
+import React, { useContext, useState } from 'react';
+import { PropostasContext } from '../context/PropostasContext';
 import BarChartComponent from "../components/dashboard/BarChartComponent";
 import TotalFechado from "../components/dashboard/TotalFechado";
 import SearchBar from "../components/dashboard/SearchBar";
@@ -7,8 +7,8 @@ import CrmBoard from "../components/dashboard/CrmBoard";
 import './Dashboard.css';
 
 const Dashboard = () => {
-  const { propostas, setPropostas } = useContext(PropostasContext); // Acessando o estado do contexto
-  const [search, setSearch] = useState(""); // Estado de pesquisa
+  const { propostas, setPropostas } = useContext(PropostasContext);
+  const [search, setSearch] = useState("");
 
   const statusData = [
     { name: "Enviadas", value: propostas.filter(p => p.status === "enviada").length },
@@ -23,14 +23,10 @@ const Dashboard = () => {
 
     const items = Array.from(propostas);
     const [removed] = items.splice(source.index, 1);
-    removed.status = destination.droppableId; // Atualiza o status da proposta para a coluna destino
+    removed.status = destination.droppableId;
     items.splice(destination.index, 0, removed);
 
     setPropostas(items);
-  };
-
-  const onAddProposta = (novaProposta) => {
-    setPropostas([...propostas, novaProposta]); // Adiciona a nova proposta no estado do Dashboard
   };
 
   return (
@@ -41,7 +37,6 @@ const Dashboard = () => {
       </div>
 
       <SearchBar search={search} setSearch={setSearch} />
-
       <CrmBoard propostas={propostas} search={search} handleDragEnd={handleDragEnd} />
     </div>
   );

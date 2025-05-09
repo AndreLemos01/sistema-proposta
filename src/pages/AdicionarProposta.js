@@ -1,134 +1,129 @@
 import React, { useState, useContext } from "react";
-import { PropostasContext } from "../context/PropostasContext";
-import { FaCog } from "react-icons/fa";
-import "./AdicionarProposta.css";
+import { FaCog, FaDownload } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-
-
-const modelosTextoDisponiveis = {
-  padrão: "Prezado cliente, segue proposta conforme solicitado...",
-  premium: "Esta proposta segue os mais altos padrões de qualidade...",
-};
-
-const itensDisponiveis = ["Controle de pragas", "Limpeza de reservatórios", "Sanitização"];
-
-const tiposDePragas = [
-  "Baratas",
-  "Ratos",
-  "Formigas",
-  "Aranhas",
-  "Cupins",
-  "Mosquitos",
-];
+import toast from "react-hot-toast";
+import { jsPDF } from "jspdf";
+import { ConfigContext } from "../context/ConfigContext";
+import "./AdicionarProposta.css";
 
 const AdicionarProposta = () => {
   const [tipo, setTipo] = useState("");
-  const [valor, setValor] = useState("");
-  const [cliente, setCliente] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [validoPor, setValidoPor] = useState("7 dias");
-  const [modeloSelecionado, setModeloSelecionado] = useState("padrão");
-  const [modeloTexto, setModeloTexto] = useState(modelosTextoDisponiveis["padrão"]);
-  const [papelTimbrado, setPapelTimbrado] = useState(null);
+  const [cliente, setCliente] = useState("");  // Cliente selecionado
+  const [modeloTexto, setModeloTexto] = useState("");
+  const [validoPor, setValidoPor] = useState("");
   const [condicoesPagamento, setCondicoesPagamento] = useState("");
-  const [responsavel, setResponsavel] = useState("");
+  const [descricao, setDescricao] = useState("");
   const [itensSelecionados, setItensSelecionados] = useState([]);
-  const [pragasSelecionadas, setPragasSelecionadas] = useState([]);
-  const [reservatoriosSelecionados, setReservatoriosSelecionados] = useState([]);
-  const { propostas, setPropostas } = useContext(PropostasContext);
+  const [introducao, setIntroducao] = useState("");
+  const [textoIntroducaoSelecionado, setTextoIntroducaoSelecionado] = useState("");  // Armazena o texto da introdução
+  const [textoModeloSelecionado, setTextoModeloSelecionado] = useState("");
+  const [quantidadeItem, setQuantidadeItem] = useState("");
+  const [valorItem, setValorItem] = useState("");
+  const [searchCliente, setSearchCliente] = useState(""); // Estado para pesquisa de cliente
+  const [clientesEncontrados, setClientesEncontrados] = useState([]); // Estado para armazenar os clientes filtrados
 
-  const formatarValor = () => {
-    const numero = parseFloat(valor.replace(/[^\d]/g, "")) / 100;
-    if (!isNaN(numero)) {
-      setValor(numero.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }));
-    }
-  };
+  const navigate = useNavigate();
+  const irParaConfiguracoes = () => navigate("/configuracoes");
 
-  const handleAddItem = (itemNome) => {
-    if (itemNome === "Controle de pragas") {
-      setPragasSelecionadas([...pragasSelecionadas, { pragas: [], valor: "", quantidade: 1, agrupado: false }]);
-    } else if (itemNome === "Limpeza de reservatórios") {
-      setReservatoriosSelecionados([...reservatoriosSelecionados, { tipo: "caixa d'água", litragem: "", valor: "" }]);
+  const { clientes = [], modelosTexto = [], formasPagamento = [], prazosValidade = [], itensDisponiveis = [], introducoes = [] } = useContext(ConfigContext);
+
+  // Função para buscar clientes com base no texto da pesquisa
+  const handlePesquisarCliente = (e) => {
+    setSearchCliente(e.target.value);
+
+    // Se o usuário começar a digitar, mostramos as opções de clientes
+    if (e.target.value.trim()) {
+      const filteredClientes = clientes.filter(cliente =>
+        cliente.nome.toLowerCase().startsWith(e.target.value.toLowerCase()) // Busca por clientes que começam com o que é digitado
+      );
+      setClientesEncontrados(filteredClientes);
     } else {
-      setItensSelecionados([...itensSelecionados, { nome: itemNome, quantidade: 1, preco: 0 }]);
+      setClientesEncontrados([]); // Limpa a lista de clientes encontrados quando não há pesquisa
     }
   };
 
-  const handlePragaChange = (index, praga) => {
-    const novas = [...pragasSelecionadas];
-    const pragas = novas[index].pragas.includes(praga)
-      ? novas[index].pragas.filter((p) => p !== praga)
-      : [...novas[index].pragas, praga];
-    novas[index].pragas = pragas;
-    setPragasSelecionadas(novas);
+  const handleAddItem = (titulo) => {
+    if (!titulo || itensSelecionados.includes(titulo)) return;
+    setItensSelecionados([...itensSelecionados, titulo]);
   };
 
-  const handlePragaValorChange = (index, field, value) => {
-    const novas = [...pragasSelecionadas];
-    novas[index][field] = value;
-    setPragasSelecionadas(novas);
-  };
-
-  const handleReservatorioChange = (index, field, value) => {
-    const novos = [...reservatoriosSelecionados];
-    novos[index][field] = value;
-    setReservatoriosSelecionados(novos);
-  };
-
-  const removerPraga = (index) => {
-    const novas = [...pragasSelecionadas];
-    novas.splice(index, 1);
-    setPragasSelecionadas(novas);
-  };
-
-  const removerReservatorio = (index) => {
-    const novos = [...reservatoriosSelecionados];
+  const handleRemoveItem = (index) => {
+    const novos = [...itensSelecionados];
     novos.splice(index, 1);
-    setReservatoriosSelecionados(novos);
+    setItensSelecionados(novos);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!tipo || !valor || !cliente) {
-      alert("Campos obrigatórios precisam ser preenchidos!");
+    if (!tipo || !cliente || !modeloTexto) {
+      toast.error("Preencha todos os campos obrigatórios!");
       return;
     }
 
-    const novaProposta = {
-      id: Math.random().toString(36).substr(2, 9),
-      tipo,
-      valor,
-      cliente,
-      descricao,
-      itens: [...itensSelecionados, ...pragasSelecionadas, ...reservatoriosSelecionados],
-      modeloTexto,
-      papelTimbrado,
-      condicoesPagamento,
-      validoPor,
-      responsavel,
-      status: "enviada",
-    };
-
-    setPropostas([...propostas, novaProposta]);
+    toast.success("Proposta salva com sucesso! (simulação)");
   };
 
-  const navigate = useNavigate();
+  // Funções para seleção de Introdução e Modelo de Texto
+  const handleSelecionarIntroducao = (texto) => {
+    setIntroducao(texto);  // Carrega a introdução selecionada
+    setTextoIntroducaoSelecionado(texto);  // Preenche a caixa de texto com o conteúdo da introdução
+  };
 
-  const irParaConfiguracoes = () => {
-  navigate("/configuracoes");
-};
+  const handleSelecionarModeloTexto = (texto) => {
+    setModeloTexto(texto);  // Carrega o modelo de texto selecionado
+    setTextoModeloSelecionado(texto);  // Preenche a caixa de texto com o conteúdo do modelo de texto
+  };
 
+  // Função para adicionar item e valor na proposta
+  const handleAdicionarItemProposta = () => {
+    if (!quantidadeItem || !valorItem) return;
+    const novoItem = { quantidade: quantidadeItem, valor: valorItem };
+    setItensSelecionados([...itensSelecionados, novoItem]);
+    setQuantidadeItem("");
+    setValorItem("");
+  };
+
+  // Função para gerar o PDF da proposta
+  const handleBaixarProposta = () => {
+    const doc = new jsPDF();
+
+    // Adicionando título e detalhes da proposta
+    doc.setFont("helvetica", "normal");
+    doc.text(`Proposta para ${cliente}`, 20, 20);
+    doc.text(`Tipo: ${tipo}`, 20, 30);
+    doc.text(`Modelo de Texto: ${modeloTexto}`, 20, 40);
+    doc.text(`Validade: ${validoPor}`, 20, 50);
+    doc.text(`Condições de Pagamento: ${condicoesPagamento}`, 20, 60);
+    doc.text(`Descrição: ${descricao}`, 20, 70);
+
+    // Adicionando os itens da proposta
+    doc.text("Itens da Proposta:", 20, 90);
+    itensSelecionados.forEach((item, index) => {
+      doc.text(`${index + 1}. ${item}`, 20, 100 + index * 10);
+    });
+
+    // Salvando o PDF com o nome da proposta
+    doc.save(`Proposta_${cliente}.pdf`);
+  };
+
+  // Funções de Enviar e Visualizar Proposta
+  const handleEnviarProposta = () => {
+    alert("Proposta enviada!");
+  };
+
+  const handleVisualizarProposta = () => {
+    alert("Visualizando proposta!");
+  };
 
   return (
     <div className="adicionar-proposta">
       <div className="top-bar">
         <h2>Adicionar Nova Proposta</h2>
-        <FaCog className="config-icon" onClick={irParaConfiguracoes} style={{ cursor: "pointer" }} />
-
+        <FaCog className="config-icon" onClick={irParaConfiguracoes} />
       </div>
+
       <form onSubmit={handleSubmit} className="form-proposta">
-        {/* Campos principais */}
         <section className="form-section">
           <label>Tipo *</label>
           <select value={tipo} onChange={(e) => setTipo(e.target.value)} required>
@@ -140,175 +135,138 @@ const AdicionarProposta = () => {
         </section>
 
         <section className="form-section">
-          <label>Valor Total *</label>
-          <input
-            type="text"
-            value={valor}
-            onBlur={formatarValor}
-            onChange={(e) => setValor(e.target.value)}
-            placeholder="R$ 0,00"
-            required
-          />
-        </section>
-
-        <section className="form-section">
           <label>Cliente *</label>
           <input
             type="text"
-            value={cliente}
-            onChange={(e) => setCliente(e.target.value)}
-            required
+            value={searchCliente}
+            onChange={handlePesquisarCliente}
+            placeholder="Pesquisar cliente"
+          />
+          {/* Exibe o dropdown de clientes encontrados */}
+          {clientesEncontrados.length > 0 && (
+            <div className="cliente-dropdown">
+              {clientesEncontrados.map((cliente, idx) => (
+                <div
+                  key={idx}
+                  className="cliente-option"
+                  onClick={() => {
+                    setCliente(cliente.nome);
+                    setSearchCliente(cliente.nome); // Preenche o campo com o cliente selecionado
+                    setClientesEncontrados([]); // Fecha o dropdown
+                  }}
+                >
+                  {cliente.nome}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="form-section">
+          <label>Introdução</label>
+          <select value={introducao} onChange={(e) => handleSelecionarIntroducao(e.target.value)}>
+            <option value="">Selecione a introdução</option>
+            {introducoes.map((item, idx) => (
+              <option key={idx} value={item}>{item}</option>
+            ))}
+          </select>
+        </section>
+
+        <section className="form-section">
+          <textarea
+            value={textoIntroducaoSelecionado}
+            onChange={(e) => setTextoIntroducaoSelecionado(e.target.value)}
+            placeholder="Edite a introdução aqui..."
+            rows="5"
           />
         </section>
 
         <section className="form-section">
-          <label>Responsável</label>
-          <input
-            type="text"
-            value={responsavel}
-            onChange={(e) => setResponsavel(e.target.value)}
+          <label>Itens da Proposta</label>
+          <select defaultValue="" onChange={(e) => handleAddItem(e.target.value)}>
+            <option value="" disabled>Selecione um item</option>
+            {itensDisponiveis.map((item, idx) => (
+              <option key={idx} value={item.titulo}>{item.titulo}</option>
+            ))}
+          </select>
+
+          <ul className="selected-items">
+            {itensSelecionados.map((titulo, idx) => (
+              <li key={idx}>
+                {titulo} 
+                <button type="button" onClick={() => handleRemoveItem(idx)}>Remover</button>
+                <div>
+                  <input
+                    type="number"
+                    value={quantidadeItem}
+                    onChange={(e) => setQuantidadeItem(e.target.value)}
+                    placeholder="Quantidade"
+                  />
+                  <input
+                    type="number"
+                    value={valorItem}
+                    onChange={(e) => setValorItem(e.target.value)}
+                    placeholder="Valor"
+                  />
+                  <button type="button" onClick={handleAdicionarItemProposta}>Adicionar</button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="form-section">
+          <label>Modelo de Texto</label>
+          <select value={modeloTexto} onChange={(e) => handleSelecionarModeloTexto(e.target.value)}>
+            <option value="">Selecione</option>
+            {modelosTexto.map((m, i) => (
+              <option key={i} value={m}>{m}</option>
+            ))}
+          </select>
+        </section>
+
+        <section className="form-section">
+          <textarea
+            value={textoModeloSelecionado}
+            onChange={(e) => setTextoModeloSelecionado(e.target.value)}
+            placeholder="Edite o modelo de texto aqui..."
+            rows="5"
           />
         </section>
 
         <section className="form-section">
           <label>Validade da Proposta</label>
           <select value={validoPor} onChange={(e) => setValidoPor(e.target.value)}>
-            <option value="7 dias">7 dias</option>
-            <option value="15 dias">15 dias</option>
-            <option value="20 dias">20 dias</option>
-            <option value="30 dias">30 dias</option>
-          </select>
-        </section>
-
-        <section className="form-section">
-          <label>Descrição</label>
-          <textarea
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            placeholder="Observações adicionais"
-          />
-        </section>
-
-        <section className="form-section">
-          <label>Itens da Proposta</label>
-          <select onChange={(e) => handleAddItem(e.target.value)} defaultValue="">
-            <option value="" disabled>Selecione um item</option>
-            {itensDisponiveis.map((item, idx) => (
-              <option key={idx} value={item}>{item}</option>
+            <option value="">Selecione</option>
+            {prazosValidade.map((p, i) => (
+              <option key={i} value={p}>{p}</option>
             ))}
           </select>
-
-          {pragasSelecionadas.map((grupo, index) => (
-            <div key={index} className="item">
-              <strong>Controle de Pragas</strong>
-              <div className="checkboxes">
-                {tiposDePragas.map((praga, i) => (
-                  <label key={i}>
-                    <input
-                      type="checkbox"
-                      checked={grupo.pragas.includes(praga)}
-                      onChange={() => handlePragaChange(index, praga)}
-                    /> {praga}
-                  </label>
-                ))}
-              </div>
-              <input
-                type="number"
-                value={grupo.quantidade}
-                onChange={(e) => handlePragaValorChange(index, "quantidade", e.target.value)}
-                placeholder="Quantidade"
-              />
-              <input
-                type="number"
-                value={grupo.valor}
-                onChange={(e) => handlePragaValorChange(index, "valor", e.target.value)}
-                placeholder="Valor (R$)"
-              />
-              <button type="button" onClick={() => removerPraga(index)}>❌</button>
-            </div>
-          ))}
-
-          {reservatoriosSelecionados.map((item, index) => (
-            <div key={index} className="item">
-              <strong>Limpeza de Reservatório</strong>
-              <select value={item.tipo} onChange={(e) => handleReservatorioChange(index, "tipo", e.target.value)}>
-                <option value="caixa d'água">Caixa d'água</option>
-                <option value="cisterna">Cisterna</option>
-              </select>
-              <input
-                type="number"
-                value={item.litragem}
-                onChange={(e) => handleReservatorioChange(index, "litragem", e.target.value)}
-                placeholder="Litragem"
-              />
-              <input
-                type="number"
-                value={item.valor}
-                onChange={(e) => handleReservatorioChange(index, "valor", e.target.value)}
-                placeholder="Valor (R$)"
-              />
-              <button type="button" onClick={() => removerReservatorio(index)}>❌</button>
-            </div>
-          ))}
         </section>
 
         <section className="form-section">
-          <label>Modelo de Texto</label>
-          <select
-            value={modeloSelecionado}
-            onChange={(e) => {
-              setModeloSelecionado(e.target.value);
-              setModeloTexto(modelosTextoDisponiveis[e.target.value]);
-            }}
-          >
-            {Object.keys(modelosTextoDisponiveis).map((key) => (
-              <option key={key} value={key}>{key}</option>
-            ))}
-          </select>
-          <textarea
-            value={modeloTexto}
-            onChange={(e) => setModeloTexto(e.target.value)}
-            placeholder="Texto da proposta"
-          />
-        </section>
-
-        <section className="form-section">
-          <label>Condições de Pagamento</label>
+          <label>Forma de Pagamento</label>
           <select value={condicoesPagamento} onChange={(e) => setCondicoesPagamento(e.target.value)}>
             <option value="">Selecione</option>
-            <option value="crédito">Crédito</option>
-            <option value="débito">Débito</option>
-            <option value="à vista">À vista</option>
-            <option value="pix">Pix</option>
-            <option value="boleto">Boleto</option>
+            {formasPagamento.map((f, i) => (
+              <option key={i} value={f}>{f}</option>
+            ))}
           </select>
         </section>
 
         <section className="form-section">
-  <label>Papel Timbrado</label>
-  <select value={papelTimbrado || ""} onChange={(e) => setPapelTimbrado(e.target.value)}>
-    <option value="">Selecione um modelo</option>
-    <option value="modelo1">Modelo 1 - Clássico</option>
-    <option value="modelo2">Modelo 2 - Moderno</option>
-    <option value="modelo3">Modelo 3 - Luxo</option>
-  </select>
-
-      {papelTimbrado && (
-        <div className="preview-timbrado">
-          <p>Prévia:</p>
-          <img
-            src={`/imagens/timbrados/${papelTimbrado}.jpg`}
-            alt="Prévia do papel timbrado"
-            style={{ maxWidth: "300px", marginTop: "10px", border: "1px solid #ccc" }}
-          />
-        </div>
-      )}
-    </section>
-
+          <label>Observações da Proposta</label>
+          <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Escreva observações adicionais da proposta." />
+        </section>
 
         <div className="button-group">
-          <button type="submit" className="btn-submit">Salvar</button>
-          <button type="button" className="btn-email" onClick={() => alert('Função de envio por e-mail em construção')}>Enviar por E-mail</button>
+          <button type="submit" className="btn-submit">Salvar Proposta</button>
+          <button type="button" onClick={handleEnviarProposta} className="btn-submit">Enviar Proposta</button>
+          <button type="button" onClick={handleVisualizarProposta} className="btn-submit">Visualizar Proposta</button>
+          {/* Ícone de download */} 
+          <button type="button" onClick={handleBaixarProposta} className="btn-submit">
+            <FaDownload /> Baixar Proposta
+          </button>
         </div>
       </form>
     </div>

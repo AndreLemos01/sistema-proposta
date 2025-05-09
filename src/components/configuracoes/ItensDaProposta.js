@@ -1,162 +1,164 @@
-import React, { useState } from 'react';
-import { Card, CardContent } from '../../components/ui/card';
-import { Select, SelectItem } from '../../components/ui/select';
-import { Input } from '../../components/ui/input';
-import { Button } from '../../components/ui/button';
+// ItensDaProposta.js atualizado para usar ConfigContext em vez de ItensContext
+import React, { useState, useContext, useEffect } from "react";
+import { Card, CardContent } from "../../components/ui/card";
+import { Input } from "../../components/ui/input";
+import { Button } from "../../components/ui/button";
+import { Select, SelectItem } from "../../components/ui/select";
+import { ConfigContext } from "../../context/ConfigContext";
+import './ItensDaProposta.css';
 
 const estilos = [
-  { value: 'agrupado', label: 'Agrupável por Tipo' },
-  { value: 'detalhado', label: 'Com Detalhamento Técnico' },
-  { value: 'simples', label: 'Simples' },
+  { value: "simples", label: "Simples" },
+  { value: "agrupado", label: "Agrupável por Tipo" },
+  { value: "detalhado", label: "Com Detalhamento Técnico" },
 ];
 
 export default function ItensDaProposta() {
-  const [estiloSelecionado, setEstiloSelecionado] = useState('simples');
-  const [titulo, setTitulo] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [itensAgrupados, setItensAgrupados] = useState([]);
-  const [itensDetalhados, setItensDetalhados] = useState([]);
-  const [itensSimples, setItensSimples] = useState([]);
-  const [variaveisDetalhadas, setVariaveisDetalhadas] = useState([]);
-  const [descricaoVariavel, setDescricaoVariavel] = useState('');
-  const [step, setStep] = useState(1);
+  const { itensDisponiveis, setItensDisponiveis } = useContext(ConfigContext);
+  const [titulo, setTitulo] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [estilo, setEstilo] = useState("simples");
+  const [variavel, setVariavel] = useState("");
+  const [variaveis, setVariaveis] = useState([]);
+  const [itemEditando, setItemEditando] = useState(null);
 
-  const adicionarItemAgrupado = (item) => {
-    setItensAgrupados([...itensAgrupados, item]);
+  useEffect(() => {
+    if (estilo !== itemEditando?.estilo) {
+      setVariaveis([]);
+      setTitulo("");
+      setDescricao("");
+      setItemEditando(null);
+    }
+
+    if (itemEditando) {
+      setTitulo(itemEditando.titulo);
+      setDescricao(itemEditando.descricao);
+      setEstilo(itemEditando.estilo);
+      setVariaveis(itemEditando.variaveis || []);
+    }
+  }, [estilo, itemEditando]);
+
+  const handleAdicionarVariavel = () => {
+    if (!variavel.trim()) return;
+    setVariaveis([...variaveis, variavel]);
+    setVariavel("");
   };
 
-  const adicionarItemDetalhado = (item) => {
-    setItensDetalhados([...itensDetalhados, item]);
+  const handleRemoverVariavel = (index) => {
+    setVariaveis(variaveis.filter((_, i) => i !== index));
   };
 
-  const adicionarItemSimples = () => {
-    const novoItem = { id: Date.now(), nome: '', descricao: '' };
-    setItensSimples([...itensSimples, novoItem]);
+  const handleSalvarItem = () => {
+    if (!titulo.trim()) {
+      alert("O título é obrigatório.");
+      return;
+    }
+
+    const novoItem = {
+      id: itemEditando ? itemEditando.id : Date.now(),
+      titulo,
+      descricao,
+      estilo,
+      variaveis: estilo !== "simples" ? variaveis : [],
+    };
+
+    if (itemEditando) {
+      const atualizados = itensDisponiveis.map((item) =>
+        item.id === itemEditando.id ? novoItem : item
+      );
+      setItensDisponiveis(atualizados);
+    } else {
+      setItensDisponiveis([...itensDisponiveis, novoItem]);
+    }
+
+    setItemEditando(null);
+    setTitulo("");
+    setDescricao("");
+    setVariaveis([]);
   };
 
-  const salvarItens = () => {
-    // Salvar os itens configurados
-    console.log('Itens salvos', itensAgrupados, itensDetalhados, itensSimples);
+  const handleEditarItem = (item) => {
+    setItemEditando(item);
   };
 
-  const handleDescricaoChange = (e) => setDescricao(e.target.value);
-
-  const handleVariavelChange = (e) => setDescricaoVariavel(e.target.value);
-
-  const avancarStep = () => setStep(step + 1);
-  const voltarStep = () => setStep(step - 1);
+  const handleDeletarItem = (id) => {
+    const atualizados = itensDisponiveis.filter(item => item.id !== id);
+    setItensDisponiveis(atualizados);
+  };
 
   return (
-    <Card className="mb-4">
-      <CardContent className="p-4">
-        <h2 className="text-xl font-semibold mb-4">Itens da Proposta</h2>
+    <div className="itens-container">
+      <div className="form-container">
+        <h2>{itemEditando ? "Editar Item" : "Adicionar Novo Item"}</h2>
 
-        <div className="mb-6">
-          <label className="block font-medium mb-1">Título do Item</label>
-          <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Título" />
-        </div>
-
-        <div className="mb-6">
-          <label className="block font-medium mb-1">Descrição (não obrigatória)</label>
-          <Input value={descricao} onChange={handleDescricaoChange} placeholder="Descrição do item" />
-        </div>
-
-        <div className="mb-6">
-          <label className="block font-medium mb-1">Selecione o Estilo</label>
-          <Select value={estiloSelecionado} onChange={(e) => setEstiloSelecionado(e.target.value)}>
-            {estilos.map((opcao) => (
-              <SelectItem key={opcao.value} value={opcao.value}>
-                {opcao.label}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
-
-        {step === 1 && estiloSelecionado === 'agrupado' && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Itens Agrupados</h3>
-            <Input
-              placeholder="Digite o item a ser agrupado"
-              onBlur={(e) => adicionarItemAgrupado(e.target.value)}
-            />
-            <div className="flex space-x-2 mt-2">
-              {itensAgrupados.map((item, index) => (
-                <div key={index} className="bg-gray-200 p-2 rounded">
-                  {item}
-                  <Button onClick={() => setItensAgrupados(itensAgrupados.filter((i) => i !== item))}>Excluir</Button>
-                </div>
-              ))}
-            </div>
-            <Button onClick={avancarStep}>Próximo</Button>
-          </div>
-        )}
-
-        {step === 1 && estiloSelecionado === 'detalhado' && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Variáveis do Item</h3>
-            <Input
-              placeholder="Digite uma variável do item"
-              onBlur={(e) => setVariaveisDetalhadas([...variaveisDetalhadas, e.target.value])}
-            />
-            <div className="flex space-x-2 mt-2">
-              {variaveisDetalhadas.map((variavel, index) => (
-                <div key={index} className="bg-gray-200 p-2 rounded">
-                  {variavel}
-                  <Button onClick={() => setVariaveisDetalhadas(variaveisDetalhadas.filter((v) => v !== variavel))}>Excluir</Button>
-                </div>
-              ))}
-            </div>
-            <Button onClick={avancarStep}>Próximo</Button>
-          </div>
-        )}
-
-        {step === 1 && estiloSelecionado === 'simples' && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Item Simples</h3>
-            <Button onClick={avancarStep}>Próximo</Button>
-          </div>
-        )}
-
-        {step === 2 && (estiloSelecionado === 'agrupado' || estiloSelecionado === 'detalhado') && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Descrição do Item</h3>
-            <div className="flex">
-              <Select>
-                {(estiloSelecionado === 'agrupado' ? itensAgrupados : variaveisDetalhadas).map((item, index) => (
-                  <SelectItem key={index} value={item}>
-                    {item}
+        <Card className="form-card">
+          <CardContent>
+            <div className="input-group">
+              <label>Tipo do Item</label>
+              <Select value={estilo} onChange={(e) => setEstilo(e.target.value)}>
+                {estilos.map((opcao) => (
+                  <SelectItem key={opcao.value} value={opcao.value}>
+                    {opcao.label}
                   </SelectItem>
                 ))}
               </Select>
-              <Input
-                placeholder="Descrição do item selecionado"
-                value={descricaoVariavel}
-                onChange={handleVariavelChange}
-              />
             </div>
-            <Button onClick={avancarStep}>Salvar e Avançar</Button>
-          </div>
-        )}
 
-        {step === 2 && estiloSelecionado === 'simples' && (
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Descrição do Item</h3>
-            <Input
-              placeholder="Descrição do item simples"
-              value={descricaoVariavel}
-              onChange={handleVariavelChange}
-            />
-            <Button onClick={avancarStep}>Salvar e Avançar</Button>
-          </div>
-        )}
+            <div className="input-group">
+              <label>Título</label>
+              <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Nome do item" />
+            </div>
 
-        {step === 3 && (
-          <div>
-            <Button onClick={salvarItens}>Salvar Itens</Button>
-            <Button onClick={voltarStep}>Voltar</Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            <div className="input-group">
+              <label>Descrição (opcional)</label>
+              <Input value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição do item" />
+            </div>
+
+            {estilo !== "simples" && (
+              <div className="variavel-container">
+                <div className="input-group">
+                  <Input
+                    value={variavel}
+                    onChange={(e) => setVariavel(e.target.value)}
+                    placeholder="Nova variável"
+                  />
+                  <Button onClick={handleAdicionarVariavel}>Adicionar</Button>
+                </div>
+                {variaveis.length > 0 && (
+                  <div className="variaveis-list">
+                    {variaveis.map((item, index) => (
+                      <span key={index} className="variavel-item">
+                        {item} <button onClick={() => handleRemoverVariavel(index)}>❌</button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <Button onClick={handleSalvarItem}>
+              {itemEditando ? "Atualizar Item" : "Salvar Item"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="items-list">
+        <h3>Itens Salvos</h3>
+        <div className="cards-container">
+          {itensDisponiveis.map((item) => (
+            <Card key={item.id} className="item-card">
+              <CardContent>
+                <h4>{item.titulo}</h4>
+                <div className="card-actions">
+                  <Button onClick={() => handleEditarItem(item)} className="edit-button">Editar</Button>
+                  <Button onClick={() => handleDeletarItem(item.id)} className="delete-button">Excluir</Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

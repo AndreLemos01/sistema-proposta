@@ -4,21 +4,25 @@
 }
 
 .main-content {
-  margin-left: 0px;
+  margin-left: 240px; /* Espaço padrão quando a sidebar está aberta */
   padding: 20px;
   flex-grow: 1;
+  transition: margin-left 0.3s ease; /* Transição suave */
 }
 
 @media (max-width: 768px) {
   .main-content { 
-    margin-left: 200px;
-    
+    margin-left: 200px; /* Ajuste para telas menores */
   }
 }
 
 @media (max-width: 480px) {
   .main-content {
-    margin-left: 0;
-   
+    margin-left: 0; /* Remove margem em dispositivos muito pequenos */
   }
+}
+
+/* Caso a sidebar esteja fechada */
+.main-content.shifted-closed {
+  margin-left: 60px; /* Ajuste quando a sidebar está fechada */
 }

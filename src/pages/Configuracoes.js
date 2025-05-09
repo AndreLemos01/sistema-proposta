@@ -1,172 +1,165 @@
-// src/pages/Configuracoes.js
+import React, { useState, useContext } from "react";
+import { ConfigContext } from "../context/ConfigContext";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
-import React, { useState } from 'react';
-import { Card, CardContent } from "../components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
-import ItensDaProposta from '../components/configuracoes/ItensDaProposta';
+const Configuracoes = () => {
+  const {
+    modelosTexto,
+    setModelosTexto,
+    formasPagamento,
+    setFormasPagamento,
+    prazosValidade,
+    setPrazosValidade,
+    introducoes,
+    setIntroducoes,
+    papeisTimbrados,
+    setPapeisTimbrados
+  } = useContext(ConfigContext);
 
+  const [novoModeloTexto, setNovoModeloTexto] = useState("");
+  const [novaFormaPagamento, setNovaFormaPagamento] = useState("");
+  const [novoPrazo, setNovoPrazo] = useState("");
+  const [novaIntroducao, setNovaIntroducao] = useState("");
+  const [novoPapelTimbrado, setNovoPapelTimbrado] = useState("");
 
-export default function Configuracoes() {
-  const [itens, setItens] = useState([]); // Para armazenar os estilos de itens
-  const [prazos, setPrazos] = useState([]); // Para armazenar os prazos de validade
-  const [modelos, setModelos] = useState([]); // Para armazenar os modelos de texto
-  const [formasPagamento, setFormasPagamento] = useState([]); // Para armazenar as formas de pagamento
-  const [papelTimbrado, setPapelTimbrado] = useState(null); // Para armazenar o arquivo de papel timbrado
-
-  // Função para adicionar um item de proposta
-  const adicionarItemProposta = (item) => {
-    setItens([...itens, item]);
+  // Funções para adicionar e remover itens
+  const handleAdicionarIntroducao = () => {
+    if (!novaIntroducao.trim()) return;
+    setIntroducoes([...introducoes, novaIntroducao]);
+    setNovaIntroducao("");
   };
 
-  // Função para adicionar um prazo
-  const adicionarPrazo = (prazo) => {
-    setPrazos([...prazos, prazo]);
+  const handleAdicionarModeloTexto = () => {
+    if (!novoModeloTexto.trim()) return;
+    setModelosTexto([...modelosTexto, novoModeloTexto]);
+    setNovoModeloTexto("");
   };
 
-  // Função para adicionar um modelo de texto
-  const adicionarModeloTexto = (modelo) => {
-    setModelos([...modelos, modelo]);
+  const handleAdicionarFormaPagamento = () => {
+    if (!novaFormaPagamento.trim()) return;
+    setFormasPagamento([...formasPagamento, novaFormaPagamento]);
+    setNovaFormaPagamento("");
   };
 
-  // Função para adicionar uma forma de pagamento
-  const adicionarFormaPagamento = (forma) => {
-    setFormasPagamento([...formasPagamento, forma]);
+  const handleAdicionarPrazo = () => {
+    if (!novoPrazo.trim()) return;
+    setPrazosValidade([...prazosValidade, novoPrazo]);
+    setNovoPrazo("");
   };
 
-  // Função para upload de papel timbrado
-  const handlePapelTimbradoUpload = (e) => {
-    const file = e.target.files[0];
-    setPapelTimbrado(file);
+  const handleAdicionarPapelTimbrado = () => {
+    if (!novoPapelTimbrado.trim()) return;
+    setPapeisTimbrados([...papeisTimbrados, novoPapelTimbrado]);
+    setNovoPapelTimbrado("");
   };
 
-  // Função para remover um item de pagamento
-  const removerFormaPagamento = (index) => {
-    const updatedFormasPagamento = [...formasPagamento];
-    updatedFormasPagamento.splice(index, 1);
-    setFormasPagamento(updatedFormasPagamento);
+  // Função para remover itens
+  const handleRemoverItem = (item, setItemFunc, list) => {
+    const updatedList = list.filter((i) => i !== item);
+    setItemFunc(updatedList);
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6 text-[#F39C12]">Configurações do Sistema</h1>
+    <div>
+      <h2>Configurações da Proposta</h2>
 
-      <Tabs defaultValue="itens" className="w-full">
-        <TabsList className="grid grid-cols-3 md:grid-cols-5 gap-2 bg-[#f7f7f7] p-2 rounded-xl mb-6">
-          <TabsTrigger value="itens">Itens da Proposta</TabsTrigger>
-          <TabsTrigger value="prazos">Prazos de Validade</TabsTrigger>
-          <TabsTrigger value="modelos">Modelos de Texto</TabsTrigger>
-          <TabsTrigger value="pagamento">Formas de Pagamento</TabsTrigger>
-          <TabsTrigger value="timbrado">Papéis Timbrados</TabsTrigger>
-        </TabsList>
+      {/* Introdução */}
+      <div>
+        <h3>Introdução</h3>
+        <Input
+          value={novaIntroducao}
+          onChange={(e) => setNovaIntroducao(e.target.value)}
+          placeholder="Adicionar nova introdução"
+        />
+        <Button onClick={handleAdicionarIntroducao}>Adicionar</Button>
+        <ul>
+          {introducoes.map((item, index) => (
+            <li key={index}>
+              {item}{" "}
+              <Button onClick={() => handleRemoverItem(item, setIntroducoes, introducoes)}>Remover</Button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        {/* Itens da Proposta */}
-        <TabsContent value="itens">
-            <ItensDaProposta />
-        </TabsContent>
+      {/* Modelo de Texto */}
+      <div>
+        <h3>Modelo de Texto</h3>
+        <Input
+          value={novoModeloTexto}
+          onChange={(e) => setNovoModeloTexto(e.target.value)}
+          placeholder="Adicionar novo modelo de texto"
+        />
+        <Button onClick={handleAdicionarModeloTexto}>Adicionar</Button>
+        <ul>
+          {modelosTexto.map((item, index) => (
+            <li key={index}>
+              {item}{" "}
+              <Button onClick={() => handleRemoverItem(item, setModelosTexto, modelosTexto)}>Remover</Button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
+      {/* Forma de Pagamento */}
+      <div>
+        <h3>Forma de Pagamento</h3>
+        <Input
+          value={novaFormaPagamento}
+          onChange={(e) => setNovaFormaPagamento(e.target.value)}
+          placeholder="Adicionar nova forma de pagamento"
+        />
+        <Button onClick={handleAdicionarFormaPagamento}>Adicionar</Button>
+        <ul>
+          {formasPagamento.map((item, index) => (
+            <li key={index}>
+              {item}{" "}
+              <Button onClick={() => handleRemoverItem(item, setFormasPagamento, formasPagamento)}>Remover</Button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        {/* Prazos de Validade */}
-        <TabsContent value="prazos">
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Prazos de Validade</h2>
-              <button onClick={() => adicionarPrazo('Novo Prazo')} className="mb-4 bg-[#F39C12] text-white p-2 rounded">
-                Adicionar Novo Prazo
-              </button>
-              <ul>
-                {prazos.map((prazo, index) => (
-                  <li key={index} className="mb-2">{prazo}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </TabsContent>
+      {/* Validade da Proposta */}
+      <div>
+        <h3>Validade da Proposta</h3>
+        <Input
+          value={novoPrazo}
+          onChange={(e) => setNovoPrazo(e.target.value)}
+          placeholder="Adicionar novo prazo de validade"
+        />
+        <Button onClick={handleAdicionarPrazo}>Adicionar</Button>
+        <ul>
+          {prazosValidade.map((item, index) => (
+            <li key={index}>
+              {item}{" "}
+              <Button onClick={() => handleRemoverItem(item, setPrazosValidade, prazosValidade)}>Remover</Button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-        {/* Modelos de Texto */}
-        <TabsContent value="modelos">
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Modelos de Texto</h2>
-              <button onClick={() => adicionarModeloTexto('Novo Modelo')} className="mb-4 bg-[#F39C12] text-white p-2 rounded">
-                Adicionar Novo Modelo
-              </button>
-              <ul>
-                {modelos.map((modelo, index) => (
-                  <li key={index} className="mb-2">{modelo}</li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Formas de Pagamento */}
-        <TabsContent value="pagamento">
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Formas de Pagamento</h2>
-              <button onClick={() => adicionarFormaPagamento('Novo Forma')} className="mb-4 bg-[#F39C12] text-white p-2 rounded">
-                Adicionar Nova Forma
-              </button>
-              <ul>
-                {formasPagamento.map((forma, index) => (
-                  <li key={index} className="mb-2">
-                    {forma} <button onClick={() => removerFormaPagamento(index)} className="text-red-500">Remover</button>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Papéis Timbrados */}
-        <TabsContent value="timbrado">
-          <Card className="mb-4">
-            <CardContent className="p-4">
-              <h2 className="text-xl font-semibold mb-4">Papéis Timbrados</h2>
-              <input type="file" onChange={handlePapelTimbradoUpload} className="mb-4" />
-              {papelTimbrado && (
-                <div className="mt-4">
-                  <p><strong>Papel Timbrado Selecionado:</strong> {papelTimbrado.name}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Visualização do Padrão da Proposta (fixa, fora das abas) */}
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4">Pré-visualização da Proposta</h2>
-        <div className="p-4 border bg-gray-50 rounded-lg">
-          <h3 className="font-semibold">Itens da Proposta:</h3>
-          <ul>
-            {itens.map((item, index) => (
-              <li key={index} className="mb-2">{item}</li>
-            ))}
-          </ul>
-
-          <h3 className="font-semibold mt-4">Formas de Pagamento:</h3>
-          <ul>
-            {formasPagamento.map((forma, index) => (
-              <li key={index} className="mb-2">{forma}</li>
-            ))}
-          </ul>
-
-          <h3 className="font-semibold mt-4">Modelo de Texto:</h3>
-          <ul>
-            {modelos.map((modelo, index) => (
-              <li key={index} className="mb-2">{modelo}</li>
-            ))}
-          </ul>
-
-          <h3 className="font-semibold mt-4">Prazos de Validade:</h3>
-          <ul>
-            {prazos.map((prazo, index) => (
-              <li key={index} className="mb-2">{prazo}</li>
-            ))}
-          </ul>
-        </div>
+      {/* Modelos de Papel Timbrado */}
+      <div>
+        <h3>Modelos de Papel Timbrado</h3>
+        <Input
+          value={novoPapelTimbrado}
+          onChange={(e) => setNovoPapelTimbrado(e.target.value)}
+          placeholder="Adicionar novo modelo de papel timbrado"
+        />
+        <Button onClick={handleAdicionarPapelTimbrado}>Adicionar</Button>
+        <ul>
+          {papeisTimbrados.map((item, index) => (
+            <li key={index}>
+              {item}{" "}
+              <Button onClick={() => handleRemoverItem(item, setPapeisTimbrados, papeisTimbrados)}>Remover</Button>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
-}
+};
+
+export default Configuracoes;

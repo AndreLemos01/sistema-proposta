@@ -1,34 +1,56 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { PropostasProvider } from './context/PropostasContext';
+import { ItensProvider } from './context/ItensContext';
+import { ConfigProvider } from './context/ConfigContext';
+
 import Sidebar from './components/Sidebar';
+import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Propostas from './pages/Propostas';
 import Clientes from './pages/Clientes';
-import AdicionarProposta from './pages/AdicionarProposta'; // Importe a nova página
-import { PropostasProvider } from './context/PropostasContext'; // Importe o PropostasProvider
-import Configuracoes from './pages/Configuracoes'; // Importe a nova página de configurações
-import './App.css';
+import AdicionarProposta from './pages/AdicionarProposta';
+import Configuracoes from './pages/Configuracoes';
+import Login from './pages/Login';
+import PrivateRoute from './routes/PrivateRoute';
 
-const App = () => {
+function Layout() {
+  const location = useLocation();
+  const isAuth = localStorage.getItem('auth');
+  const hideSidebarOnLogin = location.pathname === '/login';
+
   return (
-    <PropostasProvider>
-      <Router>
-        <div className="app-container">
-          <Sidebar />
-          <div className="main-content">
-          <Routes>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/propostas" element={<Propostas />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/adicionar-proposta" element={<AdicionarProposta />} />
-            <Route path="/configuracoes" element={<Configuracoes />} />  {/* Nova Rota */}
-          </Routes>
-
-          </div>
-        </div>
-      </Router>
-    </PropostasProvider>
+    <>
+      {isAuth && !hideSidebarOnLogin && <Sidebar />}
+      <Toaster position="top-right" />
+      <div className="main-content">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/propostas" element={<PrivateRoute><Propostas /></PrivateRoute>} />
+          <Route path="/clientes" element={<PrivateRoute><Clientes /></PrivateRoute>} />
+          <Route path="/adicionar-proposta" element={<PrivateRoute><AdicionarProposta /></PrivateRoute>} />
+          <Route path="/configuracoes" element={<PrivateRoute><Configuracoes /></PrivateRoute>} />
+        </Routes>
+      </div>
+    </>
   );
-};
+}
+
+function App() {
+  return (
+    <Router>
+      <ConfigProvider>
+        <ItensProvider>
+          <PropostasProvider>
+            <Layout />
+          </PropostasProvider>
+        </ItensProvider>
+      </ConfigProvider>
+    </Router>
+  );
+}
 
 export default App;

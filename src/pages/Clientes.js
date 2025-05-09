@@ -1,37 +1,55 @@
-import React, { useState } from 'react';
-import './Clientes.css';
+import React, { useState, useEffect } from "react";
 
 const Clientes = () => {
-  // Exemplo de lista de clientes
-  const [clientes, setClientes] = useState([
-    { id: 1, nome: 'Cliente 1', email: 'cliente1@example.com' },
-    { id: 2, nome: 'Cliente 2', email: 'cliente2@example.com' },
-  ]);
+  const [nomeCliente, setNomeCliente] = useState("");  // Estado para o nome do cliente
+  const [clientes, setClientes] = useState([]);  // Estado para armazenar os clientes
+
+  // Carregar os clientes do localStorage ao iniciar a página
+  useEffect(() => {
+    const clientesSalvos = localStorage.getItem("clientes");
+    if (clientesSalvos) {
+      setClientes(JSON.parse(clientesSalvos));
+    }
+  }, []);
+
+  // Função para adicionar um cliente
+  const handleAdicionarCliente = () => {
+    if (!nomeCliente) {
+      alert("Por favor, insira o nome do cliente!");
+      return;
+    }
+
+    // Criar novo cliente
+    const novoCliente = { id: Date.now(), nome: nomeCliente };
+
+    // Atualizar o estado de clientes
+    const novosClientes = [...clientes, novoCliente];
+    setClientes(novosClientes);
+
+    // Salvar no localStorage
+    localStorage.setItem("clientes", JSON.stringify(novosClientes));
+
+    // Limpar o campo de entrada
+    setNomeCliente("");
+  };
 
   return (
-    <div className="clientes">
-      <h2>Clientes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clientes.map((cliente) => (
-            <tr key={cliente.id}>
-              <td>{cliente.nome}</td>
-              <td>{cliente.email}</td>
-              <td>
-                <button>Editar</button>
-                <button>Excluir</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div>
+      <h1>Clientes</h1>
+      <input
+        type="text"
+        value={nomeCliente}
+        onChange={(e) => setNomeCliente(e.target.value)}
+        placeholder="Digite o nome do cliente"
+      />
+      <button onClick={handleAdicionarCliente}>Adicionar Cliente</button>
+
+      <h2>Clientes Cadastrados</h2>
+      <ul>
+        {clientes.map((cliente) => (
+          <li key={cliente.id}>{cliente.nome}</li>
+        ))}
+      </ul>
     </div>
   );
 };
