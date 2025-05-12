@@ -34,18 +34,6 @@
   transform: rotate(90deg);
 }
 
-/* Estilos para os campos de input, select e textarea */
-.form-section {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 1rem;
-}
-
-label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #444;
-}
 
 input,
 select,

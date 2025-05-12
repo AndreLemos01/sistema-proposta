@@ -100,7 +100,7 @@ const AdicionarProposta = () => {
     // Adicionando os itens da proposta
     doc.text("Itens da Proposta:", 20, 90);
     itensSelecionados.forEach((item, index) => {
-      doc.text(`${index + 1}. ${item}`, 20, 100 + index * 10);
+      doc.text(`${index + 1}. Quantidade: ${item.quantidade}, Valor: ${item.valor}`, 20, 100 + index * 10);
     });
 
     // Salvando o PDF com o nome da proposta
@@ -191,9 +191,9 @@ const AdicionarProposta = () => {
           </select>
 
           <ul className="selected-items">
-            {itensSelecionados.map((titulo, idx) => (
+            {itensSelecionados.map((item, idx) => (
               <li key={idx}>
-                {titulo} 
+                Quantidade: {item.quantidade}, Valor: {item.valor} {/* Renderizando as propriedades corretamente */}
                 <button type="button" onClick={() => handleRemoveItem(idx)}>Remover</button>
                 <div>
                   <input

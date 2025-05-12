@@ -1,0 +1,93 @@
+/* Estilo do Formulário */
+.novo-cliente {
+  font-family: 'Inter', sans-serif;
+  background-color: #f1e9e9;
+  padding: 20px;
+}
+
+.form-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  color: #074801;
+}
+
+h2 {
+  margin-bottom: 15px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Formulário de Pessoa Física */
+.pessoa-fisica-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espaçamento entre as linhas */
+  margin-top: 10px;
+}
+
+/* Linha dos campos */
+.form-row {
+  display: flex;
+  flex-direction: row; /* Campos lado a lado */
+  gap: 5px; /* Espaço entre os campos dentro da linha */
+  margin-bottom: 20px; /* Espaço entre as linhas */
+  flex-wrap: wrap; /* Permite que os campos que não cabem se movam para a linha seguinte */
+}
+
+/* Comportamento de cada grupo de entrada */
+.form-row .input-group {
+  flex: 1; /* Cada input-group ocupa um espaço igual na linha */
+  min-width: 150px; /* Define a largura mínima dos campos */
+}
+
+/* Ajuste para o campo de "Nome Completo" (mesmo estilo das outras entradas) */
+.form-row .input-group.nome-completo {
+  flex-direction: column; /* Garante que o label fique acima do campo */
+  width: 50%; /* Ajusta o campo de "Nome Completo" para 50% da largura */
+}
+
+/* Estilização do campo de entrada (os outros campos têm o mesmo estilo) */
+.form-row .input-base {
+  width: 100%; /* O campo ocupa toda a largura disponível */
+  padding: 8px; /* Espaçamento interno ao campo */
+  border: 1px solid #ccc; /* Cor da borda dos campos */
+  border-radius: 4px; /* Bordas arredondadas nos campos */
+  font-size: 16px; /* Tamanho da fonte nos campos de texto */
+}
+
+/* Estilo do label (acima de cada campo de entrada) */
+.form-row label {
+  font-weight: bold; /* Texto em negrito */
+  margin-bottom: 5px; /* Espaço abaixo do label */
+  color: #333; /* Cor do texto do label */
+}
+
+/* Estilo para quando o campo de entrada está focado (selecionado) */
+.form-row input:focus,
+.form-row select:focus {
+  border-color: #074801; /* Cor da borda quando o campo está focado */
+  outline: none; /* Remove o contorno azul padrão do navegador */
+}
+
+/* Estilo para o botão */
+button {
+  background-color: #074801; /* Cor de fundo do botão */
+  color: white; /* Cor do texto do botão */
+  padding: 10px 20px; /* Espaçamento interno do botão */
+  border: none; /* Remove a borda do botão */
+  border-radius: 4px; /* Bordas arredondadas no botão */
+  cursor: pointer; /* Cursor "pointer" ao passar sobre o botão */
+}
+
+/* Estilo para o botão quando o mouse passa sobre ele */
+button:hover {
+  background-color: #45a049;
+}
