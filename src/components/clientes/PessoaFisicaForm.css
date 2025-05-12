@@ -1,10 +1,4 @@
-/* Estilo do Formulário */
-.novo-cliente {
-  font-family: 'Inter', sans-serif;
-  background-color: #f1e9e9;
-  padding: 20px;
-}
-
+/* Seção visual geral do formulário */
 .form-section {
   background-color: #fff;
   padding: 20px;
@@ -12,6 +6,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Títulos principais */
 h1, h2 {
   color: #074801;
 }
@@ -20,74 +15,100 @@ h2 {
   margin-bottom: 15px;
 }
 
+/* Container geral do formulário */
 .form-container {
   display: flex;
   flex-direction: column;
 }
 
-/* Formulário de Pessoa Física */
+/* Container externo do formulário Pessoa Física */
 .pessoa-fisica-form {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Espaçamento entre as linhas */
+  gap: 10px;
   margin-top: 10px;
 }
 
-/* Linha dos campos */
+/* Linha contendo campos lado a lado */
 .form-row {
   display: flex;
-  flex-direction: row; /* Campos lado a lado */
-  gap: 5px; /* Espaço entre os campos dentro da linha */
-  margin-bottom: 20px; /* Espaço entre as linhas */
-  flex-wrap: wrap; /* Permite que os campos que não cabem se movam para a linha seguinte */
+  flex-direction: row;
+  gap: 10px;           /* Espaço entre campos */
+  margin-bottom: 20px;
+  flex-wrap: wrap;     /* Permite quebrar linha em telas pequenas */
 }
 
-/* Comportamento de cada grupo de entrada */
-.form-row .input-group {
-  flex: 1; /* Cada input-group ocupa um espaço igual na linha */
-  min-width: 150px; /* Define a largura mínima dos campos */
+/* Grupo de entrada com label + input */
+.input-group {
+  display: flex;
+  flex-direction: column;
 }
 
-/* Ajuste para o campo de "Nome Completo" (mesmo estilo das outras entradas) */
-.form-row .input-group.nome-completo {
-  flex-direction: column; /* Garante que o label fique acima do campo */
-  width: 50%; /* Ajusta o campo de "Nome Completo" para 50% da largura */
+/* Nome completo — linha própria com largura grande */
+.input-group.nome-completo {
+  width: 100px;
 }
 
-/* Estilização do campo de entrada (os outros campos têm o mesmo estilo) */
-.form-row .input-base {
-  width: 100%; /* O campo ocupa toda a largura disponível */
-  padding: 8px; /* Espaçamento interno ao campo */
-  border: 1px solid #ccc; /* Cor da borda dos campos */
-  border-radius: 4px; /* Bordas arredondadas nos campos */
-  font-size: 16px; /* Tamanho da fonte nos campos de texto */
+/* CPF — largura fixa */
+.input-group.cpf {
+  width: 200px;
 }
 
-/* Estilo do label (acima de cada campo de entrada) */
+/* Data de nascimento — largura fixa */
+.input-group.data-nascimento {
+  width: 160px;
+}
+
+/* Sexo — largura fixa */
+.input-group.sexo {
+  width: 160px;
+}
+
+/* Estado civil — largura fixa */
+.input-group.estado-civil {
+  width: 180px;
+}
+
+/* Profissão — largura fixa */
+.input-group.profissao {
+  width: 200px;
+}
+
+/* Estilo base dos campos de entrada */
+.input-base {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  width: 1200px; /* Ocupa o espaço definido pelo input-group */
+}
+
+/* Label dos campos */
 .form-row label {
-  font-weight: bold; /* Texto em negrito */
-  margin-bottom: 5px; /* Espaço abaixo do label */
-  color: #333; /* Cor do texto do label */
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
 }
 
-/* Estilo para quando o campo de entrada está focado (selecionado) */
-.form-row input:focus,
-.form-row select:focus {
-  border-color: #074801; /* Cor da borda quando o campo está focado */
-  outline: none; /* Remove o contorno azul padrão do navegador */
+/* Efeito ao focar no campo */
+input:focus,
+select:focus {
+  border-color: #074801;
+  outline: none;
 }
 
-/* Estilo para o botão */
+/* Botão (caso usado) */
 button {
-  background-color: #074801; /* Cor de fundo do botão */
-  color: white; /* Cor do texto do botão */
-  padding: 10px 20px; /* Espaçamento interno do botão */
-  border: none; /* Remove a borda do botão */
-  border-radius: 4px; /* Bordas arredondadas no botão */
-  cursor: pointer; /* Cursor "pointer" ao passar sobre o botão */
+  background-color: #074801;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-/* Estilo para o botão quando o mouse passa sobre ele */
 button:hover {
   background-color: #45a049;
 }
+

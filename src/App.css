@@ -3,7 +3,7 @@
 /* Fontes e Tipografia */
 body {
   font-family: 'Roboto', sans-serif; /* Definindo a fonte padrão para o corpo */
-  background-color: #f4f7fb; /* Cor de fundo suave */
+  background-color: #b5b5b8; /* Cor de fundo suave */
   color: #333; /* Cor do texto, escura para bom contraste */
 }
 
@@ -56,29 +56,17 @@ input::placeholder, textarea::placeholder {
   display: flex; /* Exibe os itens de forma flexível */
 }
 
-/* Estilo da área de conteúdo principal, incluindo a margem para a sidebar */
 .main-content {
-  margin-left: 30px; /* Espaço à esquerda para a sidebar */
-  padding: 20px; /* Preenchimento interno */
-  flex-grow: 1; /* O conteúdo principal vai ocupar o máximo de espaço disponível */
-  transition: margin-left 0.3s ease; /* Transição suave ao abrir/fechar a sidebar */
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+  padding: 20px;
 }
 
-/* Ajustes para telas pequenas (menos de 768px) */
-@media (max-width: 768px) {
-  .main-content { 
-    margin-left: 200px; /* Ajuste para telas menores */
-  }
+.main-content.shifted {
+  margin-left: 200px;
 }
 
-/* Ajustes para telas muito pequenas (menos de 480px) */
-@media (max-width: 480px) {
-  .main-content {
-    margin-left: 0; /* Remove a margem à esquerda para telas muito pequenas */
-  }
-}
-
-/* Estilo quando a sidebar está fechada */
 .main-content.shifted-closed {
-  margin-left: 60px; /* Ajusta a margem quando a sidebar estiver fechada */
+  margin-left: 60px;
 }
+

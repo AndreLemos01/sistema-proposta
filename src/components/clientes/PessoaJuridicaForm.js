@@ -1,7 +1,5 @@
-
-
-// PessoaJuridicaForm.js
 import React, { useState } from "react";
+import "./PessoaJuridicaForm.css";
 
 const PessoaJuridicaForm = () => {
   const [dados, setDados] = useState({
@@ -37,9 +35,11 @@ const PessoaJuridicaForm = () => {
   };
 
   return (
-    <>
+    <div className="pessoa-juridica-form">
+
+      {/* 1ª linha: Razão Social */}
       <div className="form-row">
-        <div className="input-group input-large">
+        <div className="input-group">
           <label htmlFor="razaoSocial">Razão social*</label>
           <input
             type="text"
@@ -50,8 +50,10 @@ const PessoaJuridicaForm = () => {
           />
         </div>
       </div>
+
+      {/* 2ª linha: Nome Fantasia */}
       <div className="form-row">
-        <div className="input-group input-large">
+        <div className="input-group">
           <label htmlFor="nomeFantasia">Nome fantasia</label>
           <input
             type="text"
@@ -62,8 +64,10 @@ const PessoaJuridicaForm = () => {
           />
         </div>
       </div>
+
+      {/* 3ª linha: CNPJ, IE + Isento, Porte, Data Abertura */}
       <div className="form-row">
-        <div className="input-group input-small">
+        <div className="input-group cnpj">
           <label htmlFor="cnpj">CNPJ*</label>
           <input
             type="text"
@@ -73,19 +77,31 @@ const PessoaJuridicaForm = () => {
             onChange={(e) => handleChange("cnpj", e.target.value)}
           />
         </div>
-        <div className="input-group input-small">
-          <label htmlFor="dataAbertura">Data de abertura</label>
+
+        <div className="input-group ie">
+          <label htmlFor="ie">
+            Inscrição Estadual
+            <span className="checkbox-inline">
+              <input
+                type="checkbox"
+                id="ieIsento"
+                checked={dados.isentoIe}
+                onChange={toggleIsentoIe}
+              />
+              <span className="checkbox-label">Isento</span>
+            </span>
+          </label>
           <input
-            type="date"
-            id="dataAbertura"
+            type="text"
+            id="ie"
             className="input-base"
-            value={dados.dataAbertura}
-            onChange={(e) => handleChange("dataAbertura", e.target.value)}
+            value={dados.ie}
+            onChange={(e) => handleChange("ie", e.target.value)}
+            disabled={dados.isentoIe}
           />
         </div>
-      </div>
-      <div className="form-row">
-        <div className="input-group input-small">
+
+        <div className="input-group porte">
           <label htmlFor="porte">Porte</label>
           <select
             id="porte"
@@ -100,7 +116,22 @@ const PessoaJuridicaForm = () => {
             <option>SA</option>
           </select>
         </div>
-        <div className="input-group input-large">
+
+        <div className="input-group data-abertura">
+          <label htmlFor="dataAbertura">Data de abertura</label>
+          <input
+            type="date"
+            id="dataAbertura"
+            className="input-base"
+            value={dados.dataAbertura}
+            onChange={(e) => handleChange("dataAbertura", e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* 4ª linha: Ramo */}
+      <div className="form-row">
+        <div className="input-group">
           <label htmlFor="ramo">Ramo de atividade</label>
           <input
             type="text"
@@ -111,8 +142,10 @@ const PessoaJuridicaForm = () => {
           />
         </div>
       </div>
+
+      {/* 5ª linha: Responsável Legal */}
       <div className="form-row">
-        <div className="input-group input-small">
+        <div className="input-group">
           <label htmlFor="responsavelLegal">Responsável legal</label>
           <input
             type="text"
@@ -122,7 +155,11 @@ const PessoaJuridicaForm = () => {
             onChange={(e) => handleChange("responsavelLegal", e.target.value)}
           />
         </div>
-        <div className="input-group input-small">
+      </div>
+
+      {/* 6ª linha: Site */}
+      <div className="form-row">
+        <div className="input-group">
           <label htmlFor="site">Site da empresa</label>
           <input
             type="text"
@@ -133,29 +170,7 @@ const PessoaJuridicaForm = () => {
           />
         </div>
       </div>
-      <div className="form-row">
-        <div className="input-group">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <input
-              type="checkbox"
-              id="ieIsento"
-              checked={dados.isentoIe}
-              onChange={toggleIsentoIe}
-            />
-            <label htmlFor="ieIsento" style={{ margin: 0 }}>Isento</label>
-          </div>
-          <label htmlFor="ie">Inscrição Estadual</label>
-          <input
-            type="text"
-            id="ie"
-            className="input-base"
-            value={dados.ie}
-            onChange={(e) => handleChange("ie", e.target.value)}
-            disabled={dados.isentoIe}
-          />
-        </div>
-      </div>
-    </>
+    </div>
   );
 };
 

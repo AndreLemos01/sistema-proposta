@@ -1,0 +1,69 @@
+.pessoa-juridica-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Força a linha a manter os campos lado a lado */
+.form-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap; /* Impede que quebre a linha */
+  max-width: 100%;   /* Evita ultrapassar a largura do container */
+  overflow-x: auto;  /* Se necessário, permite rolar horizontalmente */
+}
+
+/* Tamanhos fixos e proporcionais */
+.input-group.cnpj {
+  width: 200px;
+}
+
+.input-group.ie {
+  width: 220px;
+}
+
+.input-group.porte {
+  width: 160px;
+}
+
+.input-group.data-abertura {
+  width: 180px;
+}
+
+
+#razaoSocial {
+  width: 600px;
+}
+
+#nomeFantasia {
+  width: 600px;
+}
+
+#ramo {
+  width: 600px;
+}
+
+#responsavelLegal {
+  width: 400px;
+}
+
+#site {
+  width: 400px;
+}
+
+/* Checkbox “Isento” lado a lado com o label */
+.checkbox-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.checkbox-label {
+  font-weight: bold;
+  font-size: 13px;
+}

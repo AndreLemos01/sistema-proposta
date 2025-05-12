@@ -1,11 +1,10 @@
-/* Estilos gerais para a página NovoCliente */
- body{
+body {
   font-family: 'Inter', sans-serif;
-  background-color: #c7c7c7; /* Cor de fundo suave para a página */
-  height: 100vh; /* Altura total da página */
-  width: 100%;
+  background-color: #c7c7c7;
+  height: 100vh;
   padding: 60px;
 }
+
 
 h1 {
   color: #074801; /* Cor verde para o título */
@@ -28,7 +27,7 @@ h2 {
 }
 
 .accordion-section .card {
-   width: 100%; /* Largura total para os acordeões */
+   width: 1400px; /* Largura total para os acordeões */
   border: 1px solid #ccc; /* Adiciona uma borda leve cinza em torno de cada cartão do acordeão */
   border-radius: 5px; /* Bordas arredondadas para os cartões */
   color: black;
@@ -58,4 +57,12 @@ h2 {
 /* Efeito visual para o hover no cabeçalho */
 .accordion-section .card-header:hover {
   background-color: #137f09; /* Muda o fundo para um verde mais claro ao passar o mouse sobre o cabeçalho */
+}
+
+.form-section-1 {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
