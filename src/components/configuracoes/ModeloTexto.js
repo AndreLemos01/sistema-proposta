@@ -1,42 +1,166 @@
-// src/components/configuracoes/ModeloTexto.js
-import React, { useState } from "react";
-import { Input } from "../ui/input"; // Supondo que o Input seja um componente reutilizável
-import { Button } from "../ui/button"; // Supondo que o Button seja um componente reutilizável
+import React, { useState, useEffect } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import styles from "./ModeloTexto.module.css";
+
+const PADRAO_KEY = "padrao";
+
+const MODELO_TEXTO_PADRAO = {
+  id: PADRAO_KEY,
+  texto: `<p>Prezado(a) Cliente,</p>
+<p>Encaminhamos esta proposta para sua análise e consideração. Estamos à disposição para esclarecer quaisquer dúvidas e ajustar os termos conforme necessário para melhor atendê-lo(a).</p>
+<p>Agradecemos a oportunidade e esperamos estabelecer uma parceria de sucesso.</p>`,
+};
+
+function htmlToText(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
 
 const ModeloTexto = ({ modelosTexto, setModelosTexto }) => {
   const [novoModeloTexto, setNovoModeloTexto] = useState("");
+  const [selecionado, setSelecionado] = useState(null);
 
-  // Função para adicionar um novo modelo de texto
-  const handleAdicionarModeloTexto = () => {
-    if (!novoModeloTexto.trim()) return;  // Evitar adicionar texto vazio
-    setModelosTexto([...modelosTexto, novoModeloTexto]);  // Adiciona o novo modelo de texto
-    setNovoModeloTexto("");  // Limpa o campo de entrada após adicionar
+  useEffect(() => {
+    if (!modelosTexto.find((item) => item?.id === PADRAO_KEY)) {
+      setModelosTexto([MODELO_TEXTO_PADRAO, ...(modelosTexto || [])]);
+    }
+  }, [modelosTexto, setModelosTexto]);
+
+  useEffect(() => {
+    if (selecionado) setNovoModeloTexto(selecionado.texto);
+    else setNovoModeloTexto("");
+  }, [selecionado]);
+
+  const handleAdicionar = () => {
+    if (!novoModeloTexto.trim()) return;
+    setModelosTexto([
+      ...(modelosTexto || []),
+      { id: Date.now().toString(), texto: novoModeloTexto },
+    ]);
+    setSelecionado(null);
+    setNovoModeloTexto("");
   };
 
-  // Função para remover um modelo de texto
-  const handleRemoverModeloTexto = (item) => {
-    const updatedList = modelosTexto.filter((i) => i !== item);  // Remove o modelo de texto da lista
-    setModelosTexto(updatedList);  // Atualiza o estado com a lista sem o modelo removido
+  const handleSalvar = () => {
+    if (!selecionado) return;
+
+    setModelosTexto(
+      (modelosTexto || []).map((item) =>
+        item.id === selecionado.id ? { ...item, texto: novoModeloTexto } : item
+      )
+    );
+    setSelecionado(null);
+    setNovoModeloTexto("");
+  };
+
+  const handleExcluir = () => {
+    if (!selecionado) return;
+    if (selecionado.id === PADRAO_KEY) {
+      alert("O modelo padrão não pode ser excluído.");
+      return;
+    }
+    setModelosTexto(
+      (modelosTexto || []).filter((item) => item.id !== selecionado.id)
+    );
+    setSelecionado(null);
+    setNovoModeloTexto("");
+  };
+
+  const handleReverterPadrao = () => {
+    setNovoModeloTexto(MODELO_TEXTO_PADRAO.texto);
+  };
+
+  const handleSelecionar = (e) => {
+    const id = e.target.value;
+    const selecionadoObj = (modelosTexto || []).find((item) => item.id === id);
+    setSelecionado(selecionadoObj || null);
   };
 
   return (
-    <div>
-      <h3>Modelo de Texto</h3>
-      <Input
+    <div className={styles.container}>
+      <h3 className={styles.title}>Modelo de Texto</h3>
+
+      <div className={styles.selectWrapper}>
+        <label htmlFor="modeloSelect" className={styles.label}>
+          Selecione um modelo:
+        </label>
+        <select
+          id="modeloSelect"
+          className={styles.selectInput}
+          onChange={handleSelecionar}
+          value={selecionado ? selecionado.id : ""}
+          aria-label="Selecionar modelo de texto"
+        >
+          <option value="">Nenhum</option>
+          {(modelosTexto || [])
+            .filter((item) => item && item.texto)
+            .map((item) => (
+              <option key={item.id} value={item.id}>
+                {htmlToText(item.texto).length > 60
+                  ? htmlToText(item.texto).slice(0, 60) + "..."
+                  : htmlToText(item.texto)}
+              </option>
+            ))}
+        </select>
+      </div>
+
+      <ReactQuill
         value={novoModeloTexto}
-        onChange={(e) => setNovoModeloTexto(e.target.value)}  // Atualiza o valor do campo
-        placeholder="Adicionar novo modelo de texto"
+        onChange={setNovoModeloTexto}
+        placeholder="Escreva seu modelo de texto aqui..."
+        theme="snow"
+        className={styles.editor}
       />
-      <Button onClick={handleAdicionarModeloTexto}>Adicionar</Button>  {/* Botão para adicionar o modelo de texto */}
-      
-      <ul>
-        {modelosTexto.map((item, index) => (
-          <li key={index}>
-            {item}{" "}
-            <Button onClick={() => handleRemoverModeloTexto(item)}>Remover</Button>  {/* Botão para remover o modelo de texto */}
-          </li>
-        ))}
-      </ul>
+
+      <div className={styles.buttonGroup}>
+        {selecionado ? (
+          <>
+            <button
+              className={styles.saveButton}
+              onClick={handleSalvar}
+              aria-label="Salvar alterações do modelo"
+            >
+              Salvar alterações
+            </button>
+
+            {selecionado.id === PADRAO_KEY && (
+              <button
+                className={styles.reverterButton}
+                onClick={handleReverterPadrao}
+                aria-label="Reverter para o modelo padrão"
+                type="button"
+              >
+                Reverter para padrão
+              </button>
+            )}
+
+            <button
+              className={styles.removeButton}
+              onClick={handleExcluir}
+              aria-label="Excluir modelo selecionado"
+              disabled={selecionado.id === PADRAO_KEY}
+              style={
+                selecionado.id === PADRAO_KEY
+                  ? { cursor: "not-allowed", opacity: 0.6 }
+                  : {}
+              }
+            >
+              Excluir
+            </button>
+          </>
+        ) : (
+          <button
+            className={styles.addButton}
+            onClick={handleAdicionar}
+            aria-label="Adicionar novo modelo"
+            disabled={!novoModeloTexto.trim()}
+          >
+            Adicionar
+          </button>
+        )}
+      </div>
     </div>
   );
 };

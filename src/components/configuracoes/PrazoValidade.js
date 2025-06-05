@@ -1,39 +1,79 @@
-// src/components/configuracoes/PrazoValidade.js
 import React, { useState } from "react";
-import { Input } from "../ui/input"; // Supondo que o Input seja um componente reutilizável
-import { Button } from "../ui/button"; // Supondo que o Button seja um componente reutilizável
+import styles from "./PrazoValidade.module.css";
 
 const PrazoValidade = ({ prazosValidade, setPrazosValidade }) => {
-  const [novoPrazo, setNovoPrazo] = useState("");
+  const [quantidade, setQuantidade] = useState("");
+  const [unidade, setUnidade] = useState("Dias");
 
-  // Função para adicionar um novo prazo de validade
   const handleAdicionarPrazo = () => {
-    if (!novoPrazo.trim()) return;  // Evitar adicionar prazo vazio
-    setPrazosValidade([...prazosValidade, novoPrazo]);  // Adiciona o novo prazo de validade
-    setNovoPrazo("");  // Limpa o campo de entrada após adicionar
+    const valor = `${quantidade.padStart(2, "0")} ${unidade}`;
+    if (!quantidade.trim() || prazosValidade.includes(valor)) return;
+    setPrazosValidade([...prazosValidade, valor]);
+    setQuantidade("");
+    setUnidade("Dias");
   };
 
-  // Função para remover um prazo de validade
   const handleRemoverPrazo = (item) => {
-    const updatedList = prazosValidade.filter((i) => i !== item);  // Remove o prazo de validade da lista
-    setPrazosValidade(updatedList);  // Atualiza o estado com a lista sem o prazo removido
+    setPrazosValidade(prazosValidade.filter((i) => i !== item));
+  };
+
+  // Limita o input para no máximo 2 dígitos numéricos
+  const handleQuantidadeChange = (e) => {
+    const val = e.target.value;
+    if (/^\d{0,2}$/.test(val)) {
+      setQuantidade(val);
+    }
   };
 
   return (
-    <div>
-      <h3>Validade da Proposta</h3>
-      <Input
-        value={novoPrazo}
-        onChange={(e) => setNovoPrazo(e.target.value)}  // Atualiza o valor do campo
-        placeholder="Adicionar novo prazo de validade"
-      />
-      <Button onClick={handleAdicionarPrazo}>Adicionar</Button>  {/* Botão para adicionar o prazo de validade */}
-      
-      <ul>
+    <div className={styles.container}>
+      <h3 className={styles.title}>Validade da Proposta</h3>
+
+      <div className={styles.inputGroup}>
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={2}
+          value={quantidade}
+          onChange={handleQuantidadeChange}
+          placeholder="Qtd"
+          className={styles.inputQuantidade}
+          aria-label="Quantidade"
+        />
+
+        <select
+          value={unidade}
+          onChange={(e) => setUnidade(e.target.value)}
+          className={styles.selectUnidade}
+          aria-label="Unidade de tempo"
+        >
+          <option value="Dias">Dias</option>
+          <option value="Meses">Meses</option>
+          <option value="Ano">Ano</option>
+        </select>
+
+        <button
+          onClick={handleAdicionarPrazo}
+          className={styles.addButton}
+          disabled={!quantidade.trim()}
+          aria-label="Adicionar prazo de validade"
+        >
+          Adicionar
+        </button>
+      </div>
+
+      <ul className={styles.list}>
         {prazosValidade.map((item, index) => (
-          <li key={index}>
-            {item}{" "}
-            <Button onClick={() => handleRemoverPrazo(item)}>Remover</Button>  {/* Botão para remover o prazo de validade */}
+          <li key={index} className={styles.listItem}>
+            {item}
+            <button
+              onClick={() => handleRemoverPrazo(item)}
+              className={styles.removeButton}
+              aria-label={`Remover prazo ${item}`}
+            >
+              Remover
+            </button>
           </li>
         ))}
       </ul>

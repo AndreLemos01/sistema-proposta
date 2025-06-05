@@ -1,11 +1,5 @@
-// ItensDaProposta.js atualizado para usar ConfigContext em vez de ItensContext
 import React, { useState, useContext, useEffect } from "react";
-import { Card, CardContent } from "../../components/ui/card";
-import { Input } from "../../components/ui/input";
-import { Button } from "../../components/ui/button";
-import { Select, SelectItem } from "../../components/ui/select";
 import { ConfigContext } from "../../context/ConfigContext";
-import './ItensDaProposta.css';
 
 const estilos = [
   { value: "simples", label: "Simples" },
@@ -91,38 +85,46 @@ export default function ItensDaProposta() {
       <div className="form-container">
         <h2>{itemEditando ? "Editar Item" : "Adicionar Novo Item"}</h2>
 
-        <Card className="form-card">
-          <CardContent>
+        <div className="form-card">
+          <div className="form-card-content">
             <div className="input-group">
               <label>Tipo do Item</label>
-              <Select value={estilo} onChange={(e) => setEstilo(e.target.value)}>
+              <select value={estilo} onChange={(e) => setEstilo(e.target.value)}>
                 {estilos.map((opcao) => (
-                  <SelectItem key={opcao.value} value={opcao.value}>
+                  <option key={opcao.value} value={opcao.value}>
                     {opcao.label}
-                  </SelectItem>
+                  </option>
                 ))}
-              </Select>
+              </select>
             </div>
 
             <div className="input-group">
               <label>Título</label>
-              <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Nome do item" />
+              <input 
+                value={titulo} 
+                onChange={(e) => setTitulo(e.target.value)} 
+                placeholder="Nome do item" 
+              />
             </div>
 
             <div className="input-group">
               <label>Descrição (opcional)</label>
-              <Input value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descrição do item" />
+              <input 
+                value={descricao} 
+                onChange={(e) => setDescricao(e.target.value)} 
+                placeholder="Descrição do item" 
+              />
             </div>
 
             {estilo !== "simples" && (
               <div className="variavel-container">
                 <div className="input-group">
-                  <Input
+                  <input
                     value={variavel}
                     onChange={(e) => setVariavel(e.target.value)}
                     placeholder="Nova variável"
                   />
-                  <Button onClick={handleAdicionarVariavel}>Adicionar</Button>
+                  <button onClick={handleAdicionarVariavel}>Adicionar</button>
                 </div>
                 {variaveis.length > 0 && (
                   <div className="variaveis-list">
@@ -136,26 +138,26 @@ export default function ItensDaProposta() {
               </div>
             )}
 
-            <Button onClick={handleSalvarItem}>
+            <button onClick={handleSalvarItem}>
               {itemEditando ? "Atualizar Item" : "Salvar Item"}
-            </Button>
-          </CardContent>
-        </Card>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="items-list">
         <h3>Itens Salvos</h3>
         <div className="cards-container">
           {itensDisponiveis.map((item) => (
-            <Card key={item.id} className="item-card">
-              <CardContent>
+            <div key={item.id} className="item-card">
+              <div className="item-card-content">
                 <h4>{item.titulo}</h4>
                 <div className="card-actions">
-                  <Button onClick={() => handleEditarItem(item)} className="edit-button">Editar</Button>
-                  <Button onClick={() => handleDeletarItem(item.id)} className="delete-button">Excluir</Button>
+                  <button onClick={() => handleEditarItem(item)} className="edit-button">Editar</button>
+                  <button onClick={() => handleDeletarItem(item.id)} className="delete-button">Excluir</button>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           ))}
         </div>
       </div>

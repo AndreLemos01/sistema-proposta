@@ -1,6 +1,6 @@
 import React from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import "./CrmBoard.css";
+
 
 const CrmBoard = ({ propostas = [], search = "", handleDragEnd }) => {
   const renderCards = (status) =>

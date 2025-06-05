@@ -1,0 +1,90 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.adicionar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+.input,
+.inputEdit {
+  flex-grow: 1;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+}
+.select,
+.selectEdit {
+  width: 3rem;
+  font-size: 1.2rem;
+}
+.btnAdicionar,
+.btnSalvar,
+.btnCancelar,
+.btnEditar,
+.btnRemover {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0.3rem 0.5rem;
+  margin-left: 0.3rem;
+  transition: color 0.3s;
+}
+.btnAdicionar:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.btnSalvar:hover {
+  color: green;
+}
+.btnCancelar:hover {
+  color: red;
+}
+.btnEditar:hover {
+  color: blue;
+}
+.btnRemover:hover {
+  color: red;
+}
+.lista {
+  list-style: none;
+  padding: 0;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+.icone {
+  font-size: 1.4rem;
+  width: 1.5rem;
+  text-align: center;
+}
+.nome {
+  flex-grow: 1;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+select {
+  /* esconde texto das options */
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+select option {
+  color: black; /* manter texto visível no menu */
+  text-shadow: none;
+}

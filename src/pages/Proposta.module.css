@@ -1,0 +1,92 @@
+.container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #2d3748;
+  text-align: center;
+}
+
+.section {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  color: #4a5568;
+}
+
+.itensList {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+.backButton {
+  display: block;
+  margin: 30px auto 0;
+  padding: 12px 24px;
+  background-color: #3182ce;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.backButton:hover {
+  background-color: #2c5282;
+}
+
+/* Tela vazia */
+
+.emptyContainer {
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  color: #718096;
+}
+
+.emptyImage {
+  width: 150px;
+  margin-bottom: 20px;
+  opacity: 0.6;
+}
+
+.emptyTitle {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #2d3748;
+}
+
+.emptyText {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  max-width: 400px;
+}
+
+.startButton {
+  background-color: #48bb78;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.startButton:hover {
+  background-color: #2f855a;
+}

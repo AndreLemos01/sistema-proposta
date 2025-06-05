@@ -1,191 +1,134 @@
-import React, { useState } from "react";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa"; // Importando os ícones de seta
-import "./Clientes.css";
-import HeaderActions from "../components/clientes/HeaderActions"; // Componente HeaderActions para gerenciar pesquisa e filtro
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
+import { FaArrowDown, FaArrowUp, FaTrash, FaUserPlus } from "react-icons/fa";
+import NovoCliente from "./NovoCliente"; // Ajuste o caminho conforme seu projeto
+import styles from "./Clientes.module.css";
 
 const Clientes = () => {
-  const [activeTab, setActiveTab] = useState("todos"); // Controle de qual aba está ativa (Ativo, Inativo, Todos)
-  const [clientes, setClientes] = useState([]); // Lista de clientes
-  const [selectedClient, setSelectedClient] = useState(null); // Cliente selecionado
-  const [modalShow, setModalShow] = useState(false); // Controle para mostrar o modal
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: "ascending",
-  });
+  const [clientes, setClientes] = useState([
+    { nome: "André Luiz Lemos", cpfCnpj: "123.456.789-00", email: "andre@example.com", telefone: "(11) 99999-9999", situacao: "Ativo" },
+  ]);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "ascending" });
+  const [selectedClient, setSelectedClient] = useState(null);
 
-  // Função para adicionar um novo cliente à lista
-  const adicionarCliente = (cliente) => {
-    setClientes((prevClientes) => [...prevClientes, cliente]);
-    setModalShow(false); // Fecha o modal após adicionar o cliente
-  };
-
-  // Função para selecionar um cliente
-  const selecionarCliente = (cliente) => {
-    setSelectedClient(cliente);
-  };
-
-  // Função para excluir um cliente
-  const excluirCliente = () => {
-    if (selectedClient) {
-      const confirmDelete = window.confirm("Deseja excluir este cliente?");
-      if (confirmDelete) {
-        setClientes((prevClientes) =>
-          prevClientes.filter((client) => client !== selectedClient)
-        );
-        setSelectedClient(null); // Limpar seleção após exclusão
-      }
+  // Adiciona cliente vindo de NovoCliente via navegação
+  useEffect(() => {
+    if (location.state?.novoCliente) {
+      setClientes((prev) => [location.state.novoCliente, ...prev]);
+      // Limpa o state para evitar duplicação se voltar para essa página
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  };
+  }, [location, navigate]);
 
-  // Função para inativar um cliente
-  const inativarCliente = () => {
-    if (selectedClient) {
-      setClientes((prevClientes) =>
-        prevClientes.map((client) =>
-          client === selectedClient
-            ? { ...client, situacao: "Inativo" }
-            : client
-        )
-      );
-      setSelectedClient(null); // Limpar seleção após inativar
-    }
-  };
-
-  // Função para filtrar clientes com base no status
-  const filterClients = (status) => {
-    if (!Array.isArray(clientes)) return []; // Garantir que seja um array
-    if (status === "todos") return clientes;
-    return clientes.filter((client) => client.situacao === status);
-  };
-
-  // Função para ordenar os clientes
   const requestSort = (key) => {
     let direction = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
     }
-
     setSortConfig({ key, direction });
-
-    const sortedClients = [...clientes].sort((a, b) => {
-      if (a[key] < b[key]) {
-        return direction === "ascending" ? -1 : 1;
-      }
-      if (a[key] > b[key]) {
-        return direction === "ascending" ? 1 : -1;
-      }
+    const sorted = [...clientes].sort((a, b) => {
+      if (a[key] < b[key]) return direction === "ascending" ? -1 : 1;
+      if (a[key] > b[key]) return direction === "ascending" ? 1 : -1;
       return 0;
     });
+    setClientes(sorted);
+  };
 
-    setClientes(sortedClients);
+  const excluirCliente = (index) => {
+    if (window.confirm("Deseja realmente excluir este cliente?")) {
+      setClientes((prev) => prev.filter((_, i) => i !== index));
+    }
   };
 
   return (
-    <div className="clientes-container">
-      <div className="header">
+    <div className={styles.clientesContainer}>
+      <header className={styles.header}>
         <h1>Cadastro de Clientes</h1>
-        {/* Componente HeaderActions gerencia pesquisa e filtro */}
-        <HeaderActions setModalShow={setModalShow} />
-      </div>
+        <button
+          className={styles.btnNovoCliente}
+          onClick={() => navigate("novo-cliente")}
+          aria-label="Adicionar novo cliente"
+        >
+          <FaUserPlus /> Novo Cliente
+        </button>
+      </header>
 
-      {/* Exibe as abas Ativo, Inativo e Todos */}
-      <div className="tabs">
-        <div
-          className={`tab ativo ${activeTab === "Ativo" ? "active" : ""}`}
-          onClick={() => setActiveTab("Ativo")}
-        >
-          <h2>Ativo</h2>
-          <span>{filterClients("Ativo").length}</span>
-          <div className="bar"></div>
-        </div>
-        <div
-          className={`tab inativo ${activeTab === "Inativo" ? "active" : ""}`}
-          onClick={() => setActiveTab("Inativo")}
-        >
-          <h2>Inativo</h2>
-          <span>{filterClients("Inativo").length}</span>
-          <div className="bar"></div>
-        </div>
-        <div
-          className={`tab todos ${activeTab === "todos" ? "active" : ""}`}
-          onClick={() => setActiveTab("todos")}
-        >
-          <h2>Todos</h2>
-          <span>{clientes.length}</span>
-          <div className="bar"></div>
-        </div>
-      </div>
-
-      {/* Tabela de clientes com base na aba ativa */}
-      <div className="clientes-table">
-        <table>
-          <thead>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            {["nome", "cpfCnpj", "email", "telefone", "situacao"].map((col) => (
+              <th key={col} onClick={() => requestSort(col)} className={styles.th}>
+                {col === "nome" && "Nome"}
+                {col === "cpfCnpj" && "CPF / CNPJ"}
+                {col === "email" && "E-mail"}
+                {col === "telefone" && "Telefone"}
+                {col === "situacao" && "Status"}
+                {sortConfig.key === col && (
+                  <span>
+                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
+                  </span>
+                )}
+              </th>
+            ))}
+            <th className={styles.thActions}>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientes.length === 0 ? (
             <tr>
-              <th onClick={() => requestSort("nome")}>
-                Nome/Nome Fantasia
-                {sortConfig.key === "nome" && (
-                  <span>
-                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
-                  </span>
-                )}
-              </th>
-              <th onClick={() => requestSort("cnpj")}>
-                CPF / CNPJ
-                {sortConfig.key === "cnpj" && (
-                  <span>
-                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
-                  </span>
-                )}
-              </th>
-              <th onClick={() => requestSort("email")}>
-                E-mail
-                {sortConfig.key === "email" && (
-                  <span>
-                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
-                  </span>
-                )}
-              </th>
-              <th onClick={() => requestSort("telefone")}>
-                Telefone
-                {sortConfig.key === "telefone" && (
-                  <span>
-                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
-                  </span>
-                )}
-              </th>
-              <th onClick={() => requestSort("situacao")}>
-                Status
-                {sortConfig.key === "situacao" && (
-                  <span>
-                    {sortConfig.direction === "ascending" ? <FaArrowUp /> : <FaArrowDown />}
-                  </span>
-                )}
-              </th>
-              <th>Ações</th>
+              <td colSpan="6" className={styles.emptyMessage}>
+                Nenhum cliente cadastrado. Clique em "Novo Cliente" para adicionar.
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {filterClients(activeTab).map((client, index) => (
+          ) : (
+            clientes.map((cliente, index) => (
               <tr
                 key={index}
-                onClick={() => selecionarCliente(client)}
-                className={selectedClient === client ? "selected" : ""}
+                className={selectedClient === cliente ? styles.selectedRow : ""}
+                onClick={() => setSelectedClient(cliente)}
               >
-                <td>{client.nome} / {client.nomeFantasia}</td> {/* Exibindo Nome/Nome Fantasia na mesma célula */}
-                <td>{client.cnpj}</td>
-                <td>{client.email}</td>
-                <td>{client.telefone}</td>
-                <td>{client.situacao}</td>
-                <td>
-                  <button onClick={excluirCliente}>Excluir</button>
-                  <button onClick={inativarCliente}>Inativar</button>
+                <td>{cliente.nome}</td>
+                <td>{cliente.cpfCnpj}</td>
+                <td>{cliente.email}</td>
+                <td>{cliente.telefone}</td>
+                <td>{cliente.situacao}</td>
+                <td className={styles.actions}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      excluirCliente(index);
+                    }}
+                    aria-label={`Excluir cliente ${cliente.nome}`}
+                    className={styles.btnDelete}
+                  >
+                    <FaTrash />
+                  </button>
                 </td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {/* Sub-rotas internas para abrir NovoCliente */}
+      <Routes>
+        <Route
+          path="novo-cliente"
+          element={
+            <NovoCliente
+              onClose={(novoCliente) => {
+                if (novoCliente) {
+                  setClientes((prev) => [novoCliente, ...prev]);
+                }
+                navigate("/clientes");
+              }}
+            />
+          }
+        />
+      </Routes>
     </div>
   );
 };

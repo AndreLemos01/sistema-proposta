@@ -1,0 +1,215 @@
+.dashboardContainer {
+  padding: 1rem 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.cardsRow {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: #e6f4ea;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.1);
+  flex: 1 1 45%;
+  min-width: 500px;
+  padding: 1rem;
+  position: relative;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cardHeader h2 {
+  font-size: 1.25rem;
+  color: #074801;
+  margin: 0;
+}
+
+.cardMenu {
+  position: relative;
+}
+
+.menuButton {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #074801;
+  padding: 0 0.25rem;
+}
+
+.menuList {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  border-radius: 4px;
+  margin-top: 0.25rem;
+  min-width: 140px;
+  z-index: 10;
+  list-style: none;
+  padding: 0.5rem 0;
+}
+
+.menuList li button {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #074801;
+}
+
+.menuList li button:hover,
+.menuList li button:focus {
+  background-color: #0f9d58;
+  color: white;
+  outline: none;
+}
+
+.crmCard {
+  background-color: #f0f5f1;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+}
+
+.crmCard h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  color: #074801;
+}
+
+.crmList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.crmItem {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #d9d9d9;
+  font-size: 1rem;
+  color: #333;
+}
+
+.crmItem:last-child {
+  border-bottom: none;
+}
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+  .cardsRow {
+    flex-direction: column;
+  }
+
+  .card {
+    min-width: 100%;
+  }
+}
+
+.valoresList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.valorItem {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #d9d9d9;
+  font-weight: 600;
+  color: #074801;
+}
+
+.valorItem:last-child {
+  border-bottom: none;
+}
+
+.valorLabel {
+  font-size: 1rem;
+}
+
+.valorNumber {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.kanbanContainer {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.kanbanColumn {
+  background-color: #e6f4ea;
+  border-radius: 8px;
+  min-width: 220px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-height: 400px;
+}
+
+.columnTitle {
+  padding: 1rem;
+  font-weight: 700;
+  color: #074801;
+  border-bottom: 1px solid #ccc;
+}
+
+.droppableArea {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.kanbanCard {
+  background-color: white;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  cursor: grab;
+  user-select: none;
+}
+
+.kanbanCard:focus {
+  outline: 2px solid #137f09;
+}
+
+.dragging {
+  background-color: #c8f7c5;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.15);
+  cursor: grabbing;
+}
+.clientName {
+  margin: 0 0 0.25rem 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #074801;
+}
+
+.clientProposal {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #137f09;
+}

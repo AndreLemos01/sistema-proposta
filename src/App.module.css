@@ -1,0 +1,26 @@
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+  padding: 1rem;
+  background-color: #fff;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.sidebarOpen {
+  margin-left: 240px;
+}
+
+.sidebarClosed {
+  margin-left: 60px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .sidebarOpen {
+    margin-left: 0;
+    padding-left: 200px;
+  }
+}

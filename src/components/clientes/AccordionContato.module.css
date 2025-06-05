@@ -1,0 +1,139 @@
+/* Accordion Section */
+.accordionSection {
+  margin-top: 20px;
+}
+
+/* Espaçamento entre cards do accordion */
+.accordionCard {
+  margin-bottom: 5px; /* 5px entre accordions */
+}
+
+.accordionToggle {
+  text-align: left;
+  color: #444 !important;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.accordionTitle {
+  display: inline-block;
+  color: #444;
+  font-weight: 700;
+}
+
+.accordionBody {
+  padding-left: 10px;
+}
+
+/* Linha para inputs com vários elementos lado a lado (telefone, email) */
+.multiInputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Botões + e – para adicionar/remover */
+.addButton,
+.removeButton {
+  background-color: #074801;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  line-height: 1;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.addButton:hover,
+.removeButton:hover {
+  background-color: #137f09;
+}
+
+/* Inputs básicos e input CEP com máscara */
+.input,
+.inputCep {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+  width: 100%;
+}
+
+.input:focus,
+.inputCep:focus,
+.textarea:focus,
+select:focus {
+  border-color: #074801;
+  box-shadow: 0 0 4px #137f09;
+  outline: none;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  outline-offset: 2px;
+}
+
+/* Linha para endereço (flexbox com espaçamento) */
+.enderecoRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.enderecoRow label {
+  min-width: 40px;
+  font-weight: 700;
+  color: #444;
+}
+
+/* Input para CEP */
+.inputCep {
+  max-width: 120px;
+}
+
+/* Botão Correios ao lado do CEP */
+.correiosButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin-left: 5px;
+  color: #074801;
+  transition: color 0.3s ease;
+}
+
+.correiosButton:hover {
+  color: #137f09;
+}
+.inputError {
+  border-color: #b00020 !important;
+  box-shadow: 0 0 5px #b00020 !important;
+}
+
+.errorMsg {
+  color: #b00020;
+  font-size: 0.85rem;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}

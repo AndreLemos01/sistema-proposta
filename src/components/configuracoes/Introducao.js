@@ -1,99 +1,164 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "../ui/button"; // Supondo que o Button seja um componente reutilizável
-import ReactQuill from "react-quill"; // Importando o ReactQuill
-import "react-quill/dist/quill.snow.css"; // Importando os estilos do ReactQuill
-import "./Introducao.css"; // Importando o CSS
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import styles from "./Introducao.module.css";
 
-const MODELO_INTRODUCAO_PADRAO =
-  "Prezados, \n\nEstamos enviando a proposta conforme solicitado. Fique à vontade para analisar e entrar em contato para quaisquer dúvidas.";
+const PADRAO_KEY = "padrao";
+
+const MODELO_INTRODUCAO_PADRAO = {
+  id: PADRAO_KEY,
+  texto:
+    "<p>Prezados,</p><p>Estamos enviando a proposta conforme solicitado. Fique à vontade para analisar e entrar em contato para quaisquer dúvidas.</p>",
+};
+
+function htmlToText(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
 
 const Introducao = ({ introducoes, setIntroducoes }) => {
-  const [novaIntroducao, setNovaIntroducao] = useState(""); // Campo de entrada para nova introdução
-  const [selecionado, setSelecionado] = useState(""); // Estado para armazenar a introdução selecionada
+  const [novaIntroducao, setNovaIntroducao] = useState("");
+  const [selecionado, setSelecionado] = useState(null);
 
-  // Adicionando o texto padrão ao iniciar, se necessário
   useEffect(() => {
-    if (!introducoes.includes(MODELO_INTRODUCAO_PADRAO)) {
-      setIntroducoes((prev) => [MODELO_INTRODUCAO_PADRAO, ...prev]); // Adiciona o texto padrão apenas uma vez
+    if (!introducoes.find((item) => item?.id === PADRAO_KEY)) {
+      setIntroducoes([MODELO_INTRODUCAO_PADRAO, ...(introducoes || [])]);
     }
   }, [introducoes, setIntroducoes]);
 
-  // Função para adicionar nova introdução
+  useEffect(() => {
+    if (selecionado) setNovaIntroducao(selecionado.texto);
+    else setNovaIntroducao("");
+  }, [selecionado]);
+
   const handleAdicionarIntroducao = () => {
-    const texto = novaIntroducao.trim();
-    if (!texto) return; // Evitar adicionar texto vazio
-    setIntroducoes((prev) => [...prev, texto]); // Adiciona a nova introdução ao select
-    setNovaIntroducao(""); // Limpa o campo após adicionar
+    if (!novaIntroducao.trim()) return;
+    setIntroducoes([
+      ...(introducoes || []),
+      { id: Date.now().toString(), texto: novaIntroducao },
+    ]);
+    setSelecionado(null);
+    setNovaIntroducao("");
   };
 
-  // Função para editar a introdução selecionada
-  const handleSelecaoIntroducao = (e) => {
-    const selecionado = e.target.value;
-    setSelecionado(selecionado); // Carrega a introdução selecionada no campo de edição
-    setNovaIntroducao(selecionado); // Atualiza a caixa de texto com o valor da introdução selecionada
-  };
-
-  // Função para salvar as alterações na introdução
   const handleSalvarAlteracoes = () => {
+    if (!selecionado) return;
+
     setIntroducoes(
-      introducoes.map((item) => (item === selecionado ? novaIntroducao : item))
-    ); // Atualiza a introdução na lista
-    setSelecionado(""); // Limpa o item selecionado
-    setNovaIntroducao(""); // Limpa o campo de texto
+      (introducoes || []).map((item) =>
+        item.id === selecionado.id ? { ...item, texto: novaIntroducao } : item
+      )
+    );
+    setSelecionado(null);
+    setNovaIntroducao("");
   };
 
-  // Função para excluir a introdução
   const handleExcluirIntroducao = () => {
-    setIntroducoes(introducoes.filter((item) => item !== selecionado)); // Remove a introdução da lista
-    setSelecionado(""); // Limpa o item selecionado
-    setNovaIntroducao(""); // Limpa o campo de texto
+    if (!selecionado) return;
+    if (selecionado.id === PADRAO_KEY) {
+      alert("O texto padrão não pode ser excluído.");
+      return;
+    }
+    setIntroducoes(
+      (introducoes || []).filter((item) => item.id !== selecionado.id)
+    );
+    setSelecionado(null);
+    setNovaIntroducao("");
+  };
+
+  const handleReverterPadrao = () => {
+    setNovaIntroducao(MODELO_INTRODUCAO_PADRAO.texto);
+  };
+
+  const handleSelecaoIntroducao = (e) => {
+    const id = e.target.value;
+    const selecionadoObj = (introducoes || []).find((item) => item.id === id);
+    setSelecionado(selecionadoObj || null);
   };
 
   return (
-    <div className="container">
-      <h3>Introdução</h3>
+    <div className={styles.container}>
+      <h3 className={styles.title}>Introdução</h3>
 
-      {/* Caixa de texto maior para dados que podem ser editados */}
-      <ReactQuill
-        value={novaIntroducao} // Atualiza o texto conforme o usuário digita
-        onChange={setNovaIntroducao} // Atualiza o texto conforme o usuário digita
-        placeholder="Escreva sua introdução aqui..."
-        theme="snow"
-        style={{ minHeight: "150px", marginBottom: "15px" }} // Aumenta a altura da caixa de texto
-      />
-
-      {/* Botões de Salvar ou Excluir */}
-      <div className="flex justify-end mt-4">
-        {selecionado ? (
-          <>
-            <Button onClick={handleSalvarAlteracoes} className="save-button">
-              Salvar alterações
-            </Button>
-            <Button onClick={handleExcluirIntroducao} className="remove-button">
-              Excluir
-            </Button>
-          </>
-        ) : (
-          <Button onClick={handleAdicionarIntroducao} className="add-button">
-            Adicionar
-          </Button>
-        )}
+      <div className={styles.selectWrapper}>
+        <label htmlFor="introducaoSelect" className={styles.label}>
+          Selecione uma introdução:
+        </label>
+        <select
+          id="introducaoSelect"
+          className={styles.selectInput}
+          onChange={handleSelecaoIntroducao}
+          value={selecionado ? selecionado.id : ""}
+          aria-label="Selecionar introdução"
+        >
+          <option value="">Nenhuma</option>
+          {(introducoes || [])
+            .filter((item) => item && item.texto)
+            .map((item) => (
+              <option key={item.id} value={item.id}>
+                {htmlToText(item.texto).length > 60
+                  ? htmlToText(item.texto).slice(0, 60) + "..."
+                  : htmlToText(item.texto)}
+              </option>
+            ))}
+        </select>
       </div>
 
-      {/* Exibindo o Select com as introduções */}
-      <div className="mt-6">
-        <select
-          className="select-input"
-          onChange={handleSelecaoIntroducao}
-          value={selecionado}
-        >
-          <option value="">Selecione uma introdução</option>
-          {introducoes.map((item, index) => (
-            <option key={index} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
+      <ReactQuill
+        value={novaIntroducao}
+        onChange={setNovaIntroducao}
+        placeholder="Escreva sua introdução aqui..."
+        theme="snow"
+        className={styles.editor}
+      />
+
+      <div className={styles.buttonGroup}>
+        {selecionado ? (
+          <>
+            <button
+              className={styles.saveButton}
+              onClick={handleSalvarAlteracoes}
+              aria-label="Salvar alterações da introdução"
+            >
+              Salvar alterações
+            </button>
+
+            {selecionado.id === PADRAO_KEY && (
+              <button
+                className={styles.reverterButton}
+                onClick={handleReverterPadrao}
+                aria-label="Reverter para o texto padrão"
+                type="button"
+              >
+                Reverter para padrão
+              </button>
+            )}
+
+            <button
+              className={styles.removeButton}
+              onClick={handleExcluirIntroducao}
+              aria-label="Excluir introdução selecionada"
+              disabled={selecionado.id === PADRAO_KEY}
+              style={
+                selecionado.id === PADRAO_KEY
+                  ? { cursor: "not-allowed", opacity: 0.6 }
+                  : {}
+              }
+            >
+              Excluir
+            </button>
+          </>
+        ) : (
+          <button
+            className={styles.addButton}
+            onClick={handleAdicionarIntroducao}
+            aria-label="Adicionar nova introdução"
+            disabled={!novaIntroducao.trim()}
+          >
+            Adicionar
+          </button>
+        )}
       </div>
     </div>
   );

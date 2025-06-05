@@ -1,0 +1,251 @@
+.adicionar-proposta {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem 1.5rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.top-bar h2 {
+  font-weight: 700;
+  color: #074801;
+  margin: 0;
+}
+
+.config-icon {
+  font-size: 1.8rem;
+  color: #137f09;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.config-icon:hover {
+  color: #074801;
+}
+
+.form-proposta {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-section label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #074801;
+}
+
+.form-section select,
+.form-section input[type="text"],
+.form-section input[type="number"],
+.form-section textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-section select:focus,
+.form-section input[type="text"]:focus,
+.form-section input[type="number"]:focus,
+.form-section textarea:focus {
+  border-color: #137f09;
+  outline: none;
+}
+
+.cliente-dropdown {
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  border-radius: 6px;
+  margin-top: 0.25rem;
+  background: white;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  z-index: 100;
+  position: absolute;
+  width: 100%;
+}
+
+.cliente-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  color: #074801;
+  font-weight: 500;
+}
+
+.cliente-option:hover {
+  background-color: #e6f4ea;
+}
+
+.selected-items {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.item-proposta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e6f4ea;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: #074801;
+  font-weight: 600;
+}
+
+.item-proposta strong {
+  flex: 1;
+}
+
+.item-proposta > div {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.item-proposta label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.item-proposta input[type="number"] {
+  width: 80px;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.item-proposta button {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.item-proposta button:hover {
+  background-color: #d32f2f;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.btn-submit {
+  background-color: #137f09;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #074801;
+}
+
+.btn-submit svg {
+  font-size: 1.2rem;
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+  .item-proposta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .item-proposta > div {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .item-proposta label {
+    width: 45%;
+  }
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.cliente-dropdown {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cliente-option {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.cliente-option:hover {
+  background-color: #e6f7ff;
+}
+
+.cliente-cadastrar {
+  font-weight: bold;
+  color: #1890ff;
+  border-top: 1px solid #ccc;
+}
+.cliente-dropdown {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+  position: absolute;
+  width: 100%;
+}
+
+.cliente-option {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.cliente-option:hover {
+  background-color: #f0f0f0;
+}

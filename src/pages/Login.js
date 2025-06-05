@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');

@@ -1,173 +1,132 @@
-import React, { useState } from "react";
-import "./PessoaJuridicaForm.css";
+import React from "react";
+import styles from "./PessoaJuridicaForm.module.css";
 
-const PessoaJuridicaForm = () => {
-  const [dados, setDados] = useState({
-    razaoSocial: "",
-    nomeFantasia: "",
-    cnpj: "",
-    dataAbertura: "",
-    porte: "",
-    ramo: "",
-    site: "",
-    responsavelLegal: "",
-    ie: "",
-    isentoIe: false
-  });
-
-  const formatCnpj = (value) =>
-    value
-      .replace(/\D/g, "")
-      .replace(/(\d{2})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1.$2")
-      .replace(/(\d{3})(\d)/, "$1/$2")
-      .replace(/(\d{4})(\d{1,2})$/, "$1-$2");
-
+const PessoaJuridicaForm = ({ dados = {}, setDados, erros = {} }) => {
   const handleChange = (field, value) => {
     setDados({
       ...dados,
-      [field]: field === "cnpj" ? formatCnpj(value) : value
+      [field]: value,
     });
   };
 
-  const toggleIsentoIe = () => {
-    setDados((prev) => ({ ...prev, isentoIe: !prev.isentoIe, ie: "" }));
-  };
-
   return (
-    <div className="pessoa-juridica-form">
-
-      {/* 1ª linha: Razão Social */}
-      <div className="form-row">
-        <div className="input-group">
-          <label htmlFor="razaoSocial">Razão social*</label>
-          <input
-            type="text"
-            id="razaoSocial"
-            className="input-base"
-            value={dados.razaoSocial}
-            onChange={(e) => handleChange("razaoSocial", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* 2ª linha: Nome Fantasia */}
-      <div className="form-row">
-        <div className="input-group">
-          <label htmlFor="nomeFantasia">Nome fantasia</label>
-          <input
-            type="text"
-            id="nomeFantasia"
-            className="input-base"
-            value={dados.nomeFantasia}
-            onChange={(e) => handleChange("nomeFantasia", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* 3ª linha: CNPJ, IE + Isento, Porte, Data Abertura */}
-      <div className="form-row">
-        <div className="input-group cnpj">
-          <label htmlFor="cnpj">CNPJ*</label>
-          <input
-            type="text"
-            id="cnpj"
-            className="input-base"
-            value={dados.cnpj}
-            onChange={(e) => handleChange("cnpj", e.target.value)}
-          />
-        </div>
-
-        <div className="input-group ie">
-          <label htmlFor="ie">
-            Inscrição Estadual
-            <span className="checkbox-inline">
-              <input
-                type="checkbox"
-                id="ieIsento"
-                checked={dados.isentoIe}
-                onChange={toggleIsentoIe}
-              />
-              <span className="checkbox-label">Isento</span>
-            </span>
+    <div className={styles.container}>
+      <div className={styles.formRow}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="razaoSocial" className={styles.label}>
+            Razão Social*
           </label>
           <input
+            id="razaoSocial"
             type="text"
-            id="ie"
-            className="input-base"
-            value={dados.ie}
-            onChange={(e) => handleChange("ie", e.target.value)}
-            disabled={dados.isentoIe}
+            className={`${styles.inputBase} ${erros.razaoSocial ? styles.inputError : ""}`}
+            placeholder="Digite a razão social"
+            value={dados.razaoSocial || ""}
+            onChange={(e) => handleChange("razaoSocial", e.target.value)}
+            aria-invalid={!!erros.razaoSocial}
+            aria-describedby={erros.razaoSocial ? "error-razaoSocial" : undefined}
+            required
           />
+          {erros.razaoSocial && (
+            <div id="error-razaoSocial" className={styles.errorMsg}>
+              {erros.razaoSocial}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.formRow}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="cnpj" className={styles.label}>
+            CNPJ*
+          </label>
+          <input
+            id="cnpj"
+            type="text"
+            className={`${styles.inputBase} ${erros.cnpj ? styles.inputError : ""}`}
+            placeholder="00.000.000/0000-00"
+            value={dados.cnpj || ""}
+            onChange={(e) => handleChange("cnpj", e.target.value)}
+            aria-invalid={!!erros.cnpj}
+            aria-describedby={erros.cnpj ? "error-cnpj" : undefined}
+            required
+          />
+          {erros.cnpj && (
+            <div id="error-cnpj" className={styles.errorMsg}>
+              {erros.cnpj}
+            </div>
+          )}
         </div>
 
-        <div className="input-group porte">
-          <label htmlFor="porte">Porte</label>
+        <div className={styles.inputGroup}>
+          <label htmlFor="dataAbertura" className={styles.label}>
+            Data de abertura*
+          </label>
+          <input
+            id="dataAbertura"
+            type="date"
+            className={`${styles.inputBase} ${erros.dataAbertura ? styles.inputError : ""}`}
+            value={dados.dataAbertura || ""}
+            onChange={(e) => handleChange("dataAbertura", e.target.value)}
+            aria-invalid={!!erros.dataAbertura}
+            aria-describedby={erros.dataAbertura ? "error-dataAbertura" : undefined}
+            required
+          />
+          {erros.dataAbertura && (
+            <div id="error-dataAbertura" className={styles.errorMsg}>
+              {erros.dataAbertura}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.formRow}>
+        <div className={styles.inputGroup}>
+          <label htmlFor="porte" className={styles.label}>
+            Porte*
+          </label>
           <select
             id="porte"
-            className="input-base"
-            value={dados.porte}
+            className={`${styles.inputBase} ${erros.porte ? styles.inputError : ""}`}
+            value={dados.porte || ""}
             onChange={(e) => handleChange("porte", e.target.value)}
+            aria-invalid={!!erros.porte}
+            aria-describedby={erros.porte ? "error-porte" : undefined}
+            required
           >
             <option value="">Selecione</option>
-            <option>MEI</option>
-            <option>EPP</option>
-            <option>LTDA</option>
-            <option>SA</option>
+            <option value="Microempresa">Microempresa</option>
+            <option value="Pequena Empresa">Pequena Empresa</option>
+            <option value="Média Empresa">Média Empresa</option>
+            <option value="Grande Empresa">Grande Empresa</option>
           </select>
+          {erros.porte && (
+            <div id="error-porte" className={styles.errorMsg}>
+              {erros.porte}
+            </div>
+          )}
         </div>
 
-        <div className="input-group data-abertura">
-          <label htmlFor="dataAbertura">Data de abertura</label>
+        <div className={styles.inputGroup}>
+          <label htmlFor="responsavelLegal" className={styles.label}>
+            Responsável Legal*
+          </label>
           <input
-            type="date"
-            id="dataAbertura"
-            className="input-base"
-            value={dados.dataAbertura}
-            onChange={(e) => handleChange("dataAbertura", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* 4ª linha: Ramo */}
-      <div className="form-row">
-        <div className="input-group">
-          <label htmlFor="ramo">Ramo de atividade</label>
-          <input
-            type="text"
-            id="ramo"
-            className="input-base"
-            value={dados.ramo}
-            onChange={(e) => handleChange("ramo", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* 5ª linha: Responsável Legal */}
-      <div className="form-row">
-        <div className="input-group">
-          <label htmlFor="responsavelLegal">Responsável legal</label>
-          <input
-            type="text"
             id="responsavelLegal"
-            className="input-base"
-            value={dados.responsavelLegal}
-            onChange={(e) => handleChange("responsavelLegal", e.target.value)}
-          />
-        </div>
-      </div>
-
-      {/* 6ª linha: Site */}
-      <div className="form-row">
-        <div className="input-group">
-          <label htmlFor="site">Site da empresa</label>
-          <input
             type="text"
-            id="site"
-            className="input-base"
-            value={dados.site}
-            onChange={(e) => handleChange("site", e.target.value)}
+            className={`${styles.inputBase} ${erros.responsavelLegal ? styles.inputError : ""}`}
+            placeholder="Digite o nome do responsável legal"
+            value={dados.responsavelLegal || ""}
+            onChange={(e) => handleChange("responsavelLegal", e.target.value)}
+            aria-invalid={!!erros.responsavelLegal}
+            aria-describedby={erros.responsavelLegal ? "error-responsavelLegal" : undefined}
+            required
           />
+          {erros.responsavelLegal && (
+            <div id="error-responsavelLegal" className={styles.errorMsg}>
+              {erros.responsavelLegal}
+            </div>
+          )}
         </div>
       </div>
     </div>
