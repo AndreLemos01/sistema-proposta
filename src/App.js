@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-import { PropostasProvider } from './context/PropostasContext';
-import { ItensProvider } from './context/ItensContext';
 import { ConfigProvider } from './context/ConfigContext';
 
 import Sidebar from './components/Sidebar';
@@ -108,11 +106,7 @@ export default function App() {
   return (
     <Router>
       <ConfigProvider>
-        <ItensProvider>
-          <PropostasProvider>
             <Layout />
-          </PropostasProvider>
-        </ItensProvider>
       </ConfigProvider>
     </Router>
   );
